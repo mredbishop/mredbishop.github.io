@@ -1,19 +1,14 @@
 <html>
     <head>
         <title>Pirates: A Likely Story</title>
+        <link rel="stylesheet" href="shared.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script type="text/javascript" src="//www.gstatic.com/cast/sdk/libs/caf_receiver/v3/cast_receiver_framework.js"></script>
     </head>
-    <body style="color: white">
-        <div>Hello World</div>
+    <body>
+        <div class="loader"></div>
+        <div class="application">LOADED, BOOM!</div>
         <div id="message"></div>
-        <script>
-            const context = cast.framework.CastReceiverContext.getInstance();
-            context.addCustomMessageListener('urn:x-cast:ch.cimnine.cromecast-test.text', function(customEvent) {
-                if (customEvent.data.type == 'message') {
-                    document.getElementById('message').innerHTML = customEvent.data.text;
-                }
-            });
-            context.start();
-        </script>
+        <script type="text/javascript" src="receiver.js"></script>
     </body>
 </html>

@@ -1,38 +1,16 @@
 <html>
     <head>
         <title>Pirates: A Likely Story</title>
+        <link rel="stylesheet" href="shared.css" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"></script>
     </head>
     <body>
-        <google-cast-launcher></google-cast-launcher>
-        <script>
-            initializeCastApi = function() {
-                cast.framework.CastContext.getInstance().setOptions({
-                    receiverApplicationId: '984F9B77',
-                    autoJoinPolicy: chrome.cast.AutoJoinPolicy.ORIGIN_SCOPED
-                });
-            };
-
-            window['__onGCastApiAvailable'] = function(isAvailable) {
-                if (isAvailable) {
-                    initializeCastApi();
-                }
-            };
-
-            function send() {
-                var textEl = document.getElementById('text');
-                sendText(textEl.value);
-            }
-
-            function sendText(txt) {
-                var castSession = cast.framework.CastContext.getInstance().getCurrentSession();
-                if (castSession) {
-                    castSession.sendMessage('urn:x-cast:ch.cimnine.cromecast-test.text', {
-                        type: 'message',
-                        text: txt
-                    });
-                }
-            }
-        </script>
+        <div class="loader"></div>
+        <div class="application">
+            LOADED, BOOM!
+            <google-cast-launcher></google-cast-launcher>
+        </div>
+        <script type="text/javascript" src="sender.js"></script>
     </body>
 </html>
