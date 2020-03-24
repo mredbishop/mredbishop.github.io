@@ -7,6 +7,8 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script
+        src="https://www.jqueryscript.net/demo/Realistic-Fireworks-Animations-Using-jQuery-And-Canvas-fireworks-js/jquery.fireworks.js"></script>
     <style>
         th,
         td,
@@ -72,7 +74,7 @@
         var time = 0;
         var timeInterval;
         var rightCount = 0;
-        const size = 12;
+        const size = 4;
         const random = (from, toLessThan) => {
             from = Math.ceil(from);
             toLessThan = Math.floor(toLessThan);
@@ -130,7 +132,11 @@
 
                 $('.right-count').text(rightCount);
 
-                if (rightCount === size * size) clearInterval(timeInterval);
+                if (rightCount === size * size) {
+                    clearInterval(timeInterval);
+                    $('.answer').attr('readonly', 'readonly');
+                    $('body').fireworks({ sound: true, opacity: 0.9, width: '100%', height: '100%' });
+               }
             });
 
             $('.answer').keyup(function () {
@@ -156,7 +162,11 @@
 
                 $('.right-count').text(rightCount);
 
-                if (rightCount === size * size) clearInterval(timeInterval);
+                if (rightCount === size * size) {
+                    clearInterval(timeInterval);
+                    $('.answer').attr('readonly', 'readonly');
+                    $('body').fireworks({ sound: true, opacity: 0.9, width: '100%', height: '100%' });
+                }
             });
 
             $('.answer').keydown(function (event) {
@@ -213,7 +223,7 @@
             for (let num of down) {
                 html += '<tr>';
                 html += `<th scope="row">${num}</th>`;
-                for (let i = 0; i < size; i++) html += `<td class="wrong"><div class="sum hidden">${across[i]} x ${num}</div><input tabindex="${tabIndex++}" class="answer" max="${size * size}" min="1" id="${across[i]}:${num}"></td>`;
+                for (let i = 0; i < size; i++) html += `<td class="wrong"><div class="sum hidden">${across[i]} x ${num}</div><div></div><input tabindex="${tabIndex++}" class="answer" max="${size * size}" min="1" id="${across[i]}:${num}"></td>`;
                 html += '</tr>';
             }
 
