@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Number Grid</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script>
+        const size = 12;
+        const random = (from, toLessThan) => {
+            from = Math.ceil(from);
+            toLessThan = Math.floor(toLessThan);
+            return Math.floor(Math.random() * (toLessThan - from)) + from;
+        }
+
+        const across = [];
+        let count = size;
+        do {
+            const index = random(0, across.length + 1);
+            across.splice(index, 0, count);
+        } while (--count);
+
+        const down = [];
+        count = size;
+        do {
+            const index = random(0, down.length + 1);
+            down.splice(index, 0, count);
+        } while (--count);
+    </script>
+    <style>
+        th, td, .answer {
+            text-align: center;
+        }
+        .answer {
+            width: 100%;
+            font-size: 18px;
+        }
+
+        .table {
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="grid" class="container pt-5"></div>
+    <script>
+        let html = '<table class="table table-bordered"><thead><tr><th scope="col">#</th>';
+
+        for (let num of across) html += `<th scope="col">${num}</th>`;
+
+        html += '<tr></thead><tbody>';
+
+            for (let num of down) {
+            html += '<tr>';
+            html += `<th scope="row">${num}</th>`;
+            for (let i = 0; i < size; i++) html += `<td><input class="answer" max="${size * size}" min="1" id="${across[i]}:${num}"></td>`;
+            html += '</tr>';
+        }
+
+        html += '</tbody></table>';
+
+        $('.grid').append(html);
+
+        $('.answer').click(function () {
+            const id = this.id;
+            console.log(id);
+        });
+    </script>
+</body>
+
+</html>
