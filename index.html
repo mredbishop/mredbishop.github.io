@@ -8,8 +8,14 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script
-        src="https://www.jqueryscript.net/demo/Realistic-Fireworks-Animations-Using-jQuery-And-Canvas-fireworks-js/jquery.fireworks.js"></script>
+        src="/fireworks.js"></script>
     <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
         th,
         td,
         .answer {
@@ -70,195 +76,7 @@
         </form>
     </div>
     <div class="grid container mt-5"></div>
-    <script>
-        var time = 0;
-        var timeInterval;
-        var rightCount = 0;
-        const size = 4;
-        const random = (from, toLessThan) => {
-            from = Math.ceil(from);
-            toLessThan = Math.floor(toLessThan);
-            return Math.floor(Math.random() * (toLessThan - from)) + from;
-        }
-
-        const newGrid = () => {
-            const across = [];
-            const down = [];
-
-            let count = size;
-            do {
-                const index = random(0, across.length + 1);
-                across.splice(index, 0, count);
-            } while (--count);
-            localStorage.setItem('across', JSON.stringify(across));
-
-            count = size;
-            do {
-                const index = random(0, down.length + 1);
-                down.splice(index, 0, count);
-            } while (--count);
-            localStorage.setItem('down', JSON.stringify(down));
-
-            return { across, down };
-        }
-
-        const attachClicks = () => {
-            $('.answer').focus(function (event) {
-                $(this).parent().children('.sum').removeClass('hidden');
-            });
-
-            $('.answer').blur(function (event) {
-                $(this).parent().children('.sum').addClass('hidden');
-
-                const possibleAnswer = Number($(this).val());
-                if (isNaN(possibleAnswer)) return;
-
-                const parts = this.id.split(':');
-                const a = Number(parts[0]);
-                const b = Number(parts[1]);
-                const answer = a * b;
-
-                if (answer === possibleAnswer) {
-                    if ($(this.parentElement).hasClass('wrong')) {
-                        $(this.parentElement).removeClass('wrong').addClass('right');
-                        rightCount++;
-                    }
-                } else {
-                    if ($(this.parentElement).hasClass('right')) {
-                        $(this.parentElement).addClass('wrong').removeClass('right');
-                        rightCount--;
-                    }
-                }
-
-                $('.right-count').text(rightCount);
-
-                if (rightCount === size * size) {
-                    clearInterval(timeInterval);
-                    $('.answer').attr('readonly', 'readonly');
-                    $('body').fireworks({ sound: true, opacity: 0.9, width: '100%', height: '100%' });
-               }
-            });
-
-            $('.answer').keyup(function () {
-                const possibleAnswer = Number($(this).val());
-                if (isNaN(possibleAnswer)) return event.preventDefault();
-
-                const parts = this.id.split(':');
-                const a = Number(parts[0]);
-                const b = Number(parts[1]);
-                const answer = a * b;
-
-                if (answer === possibleAnswer) {
-                    if ($(this.parentElement).hasClass('wrong')) {
-                        $(this.parentElement).removeClass('wrong').addClass('right');
-                        rightCount++;
-                    }
-                } else {
-                    if ($(this.parentElement).hasClass('right')) {
-                        $(this.parentElement).addClass('wrong').removeClass('right');
-                        rightCount--;
-                    }
-                }
-
-                $('.right-count').text(rightCount);
-
-                if (rightCount === size * size) {
-                    clearInterval(timeInterval);
-                    $('.answer').attr('readonly', 'readonly');
-                    $('body').fireworks({ sound: true, opacity: 0.9, width: '100%', height: '100%' });
-                }
-            });
-
-            $('.answer').keydown(function (event) {
-                if (event.keyCode === 9) return;
-
-                switch (event.keyCode) {
-                    case 37:
-                        const left = $(this).parent().prev().children('.answer');
-                        if (left) left.focus();
-                        break;
-                    case 38:
-                        const above = $($(this).parent().parent().prev().children()[$(this).parent()[0].cellIndex]).children('.answer');
-                        if (above) above.focus();
-                        break;
-                    case 39:
-                        const right = $(this).parent().next().children('.answer');
-                        if (right) right.focus();
-                        break;
-                    case 40:
-                        const below = $($(this).parent().parent().next().children()[$(this).parent()[0].cellIndex]).children('.answer')
-                        if (below) below.focus();
-                        break;
-                    default:
-                        const numMin = $(this).val().length ? 48 : 49;
-                        const numPadMin = $(this).val().length ? 96 : 97;
-
-                        if (event.keyCode !== 46 && event.keyCode !== 8 && (event.keyCode < numMin || event.keyCode > 57) && (event.keyCode < numPadMin || event.keyCode > 105)) {
-                            return event.preventDefault();
-                        }
-
-                        const value = (event.keyCode >= numMin && event.keyCode <= 57) || (event.keyCode >= numPadMin && event.keyCode <= 105) ? event.key : '';
-
-                        var t = this.value.substr(this.selectionStart, this.selectionEnd - this.selectionStart);
-
-                        const currentValue = $(this).val().replace('t', '') || '';
-
-                        const possibleAnswer = Number(currentValue + value);
-                        if (isNaN(possibleAnswer)) return event.preventDefault();
-
-                        if (!t && value && possibleAnswer > size * size) return event.preventDefault();
-                }
-            });
-        }
-
-        const renderGrid = (across, down) => {
-            $('.grid').empty();
-
-            let html = '<table class="table table-bordered"><thead><tr><th scope="col" class="timer"></th>';
-
-            for (let num of across) html += `<th scope="col">${num}</th>`;
-
-            html += '<tr></thead><tbody>';
-            let tabIndex = 1;
-            for (let num of down) {
-                html += '<tr>';
-                html += `<th scope="row">${num}</th>`;
-                for (let i = 0; i < size; i++) html += `<td class="wrong"><div class="sum hidden">${across[i]} x ${num}</div><div></div><input tabindex="${tabIndex++}" class="answer" max="${size * size}" min="1" id="${across[i]}:${num}"></td>`;
-                html += '</tr>';
-            }
-
-            html += '</tbody></table>';
-
-            $('.grid').append(html);
-
-            attachClicks();
-
-            time = 0;
-            clearInterval(timeInterval);
-
-            timeInterval = setInterval(() => {
-                time += 100;
-                $('.timer').text(`${(time / 1000).toFixed(1)}s`)
-            }, 100);
-
-            rightCount = 0;
-        }
-
-        let across = localStorage.getItem('across') && JSON.parse(localStorage.getItem('across')) || [];
-        let down = localStorage.getItem('down') && JSON.parse(localStorage.getItem('down')) || [];
-
-
-        if (!across.length || !down.length) {
-            ({ across, down } = newGrid());
-        }
-
-        $('.new-grid').click(() => {
-            ({ across, down } = newGrid());
-            renderGrid(across, down);
-        });
-
-        renderGrid(across, down);
-    </script>
+    <script src="script.js"></script>
 </body>
 
 </html>

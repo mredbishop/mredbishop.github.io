@@ -1,0 +1,24 @@
+{
+    "name": "mredbishop.github.io",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "tsc script.ts -w",
+        "tsc": "tsc"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/mredbishop/mredbishop.github.io.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/mredbishop/mredbishop.github.io/issues"
+    },
+    "homepage": "https://github.com/mredbishop/mredbishop.github.io#readme",
+    "devDependencies": {
+        "@types/jquery": "^3.3.33",
+        "typescript": "^3.8.3"
+    }
+}
