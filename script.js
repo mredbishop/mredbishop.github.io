@@ -87,7 +87,8 @@ const attachClicks = () => {
         checkAnswers(this, true);
     });
     $(".answer").keydown(function (event) {
-        event.preventDefault();
+        if (event.keyCode === 9 || event.keyCode === 13)
+            event.preventDefault();
         const cellIndex = $(this).parent()[0].cellIndex;
         switch (event.keyCode) {
             case 9:
