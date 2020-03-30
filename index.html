@@ -56,7 +56,10 @@
     </style>
     <style media="print">
         .buttons,
-        .answer,
+        .answer {
+            display: none;
+        }
+
         .timer {
             visibility: hidden;
         }
@@ -68,7 +71,7 @@
 </head>
 
 <body>
-    <div class="buttons container mt-3 text-center">
+    <div class="buttons container mt-3 mb-3 text-center">
         <form>
             <button type="button" class="new-grid btn btn-success">New Grid!</button>
             <br>
@@ -76,7 +79,7 @@
             <div><span class="right-count">0</span> right so far</div>
         </form>
     </div>
-    <div class="grid container mt-5"></div>
+    <div class="grid container"></div>
     <script src="script.js"></script>
 </body>
 
