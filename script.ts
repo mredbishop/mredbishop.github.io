@@ -215,6 +215,6 @@ if (size !== lastSize || !across.length || !down.length) {
 
 $(".new-grid").click(() => {
     ({ across, down } = newGrid());
-    $('#New Grid!').text('New Grid!');
+    $('#new-grid').text('New Grid!');
     renderGrid(across, down);
 });
