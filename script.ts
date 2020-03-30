@@ -209,8 +209,8 @@ let across = (acrossJson && JSON.parse(acrossJson)) || [];
 let downJson = localStorage.getItem("down");
 let down = (downJson && JSON.parse(downJson)) || [];
 
-if (size !== lastSize || !across.length || !down.length) {
-    ({ across, down } = newGrid());
+if (size === lastSize && across.length && down.length) {
+    renderGrid(across, down);
 }
 
 $(".new-grid").click(() => {
