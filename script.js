@@ -162,7 +162,7 @@ const renderGrid = (across, down) => {
         html += `<th scope="row">${num}</th>`;
         for (let i = 0; i < size; i++)
             html += `<td class="wrong"><div class="sum hidden">${across[i]} x ${num}</div><div></div><input tabindex="${tabIndex++}" class="answer" max="${size *
-                size}" min="1" id="${across[i]}:${num}"></td>`;
+                size}" min="1" id="${across[i]}:${num}" type="number"></td>`;
         html += "</tr>";
     }
     html += "</tbody></table>";
