@@ -158,7 +158,7 @@ const renderGrid = (across, down) => {
         html += `<th scope="row">${num}</th>`;
         for (let i = 0; i < size; i++)
             html += `<td class="wrong"><div class="sum hidden">${across[i]} x ${num}</div><div></div><input tabindex="${tabIndex++}" class="answer" max="${size *
-                size}" min="1" id="${across[i]}:${num}"></td>`;
+                size}" min="1" id="${across[i]}:${num}" readonly></td>`;
         html += "</tr>";
     }
     html += "</tbody></table>";
@@ -177,12 +177,12 @@ let acrossJson = localStorage.getItem("across");
 let across = (acrossJson && JSON.parse(acrossJson)) || [];
 let downJson = localStorage.getItem("down");
 let down = (downJson && JSON.parse(downJson)) || [];
-if (size !== lastSize || !across.length || !down.length) {
-    ({ across, down } = newGrid());
+if (size === lastSize && across.length && down.length) {
+    renderGrid(across, down);
 }
-$(".new-grid").click(() => {
+$("#start-button").click(() => {
     ({ across, down } = newGrid());
+    $('#start-button').text('New Grid!');
     renderGrid(across, down);
 });
-renderGrid(across, down);
 //# sourceMappingURL=script.js.map

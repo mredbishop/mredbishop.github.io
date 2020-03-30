@@ -213,8 +213,8 @@ if (size === lastSize && across.length && down.length) {
     renderGrid(across, down);
 }
 
-$(".new-grid").click(() => {
+$("#start-button").click(() => {
     ({ across, down } = newGrid());
-    $('#new-grid').text('New Grid!');
+    $('#start-button').text('New Grid!');
     renderGrid(across, down);
 });
