@@ -5,7 +5,7 @@ interface JQuery {
 var time = 0;
 var timeInterval: any;
 var rightCount = 0;
-const size = 2;
+const size = 12;
 const random = (from: number, toLessThan: number) => {
     from = Math.ceil(from);
     toLessThan = Math.floor(toLessThan);

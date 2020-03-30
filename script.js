@@ -2,7 +2,7 @@
 var time = 0;
 var timeInterval;
 var rightCount = 0;
-const size = 2;
+const size = 12;
 const random = (from, toLessThan) => {
     from = Math.ceil(from);
     toLessThan = Math.floor(toLessThan);
