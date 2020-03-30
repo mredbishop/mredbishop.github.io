@@ -55,8 +55,7 @@ const checkAnswers = (element: HTMLInputElement, cancelEventOnImpossibleAnswer =
                 .removeClass("wrong")
                 .addClass("right");
             rightCount++;
-            const tabIndex = Number($(element).attr("tabindex")) + 1;
-            $("[tabindex=" + tabIndex + "]").focus();
+            nextCell(element);
         }
     } else {
         if (element.parentElement && $(element.parentElement).hasClass("right")) {
@@ -74,12 +73,14 @@ const checkAnswers = (element: HTMLInputElement, cancelEventOnImpossibleAnswer =
         clearInterval(timeInterval);
         $(".answer").attr("readonly", "readonly");
         $("body").fireworks({ width: "100vw", height: "100vh", opacity: 0.6, sound: true });
-        $("body").fireworks({ width: "100vw", height: "100vh", opacity: 0.6, sound: true });
-        $("body").fireworks({ width: "100vw", height: "100vh", opacity: 0.6, sound: true });
-        $("body").fireworks({ width: "100vw", height: "100vh", opacity: 0.6, sound: true });
         setTimeout(() => $("body").fireworks({ destroy: true }), 10000);
     }
 };
+
+const nextCell = (element: HTMLInputElement, reverse?: boolean) => {
+    const tabIndex = Number($(element).attr("tabindex")) + (reverse ? -1 : 1);
+    $("[tabindex=" + tabIndex + "]").focus();
+}
 
 const attachClicks = () => {
     $(".answer").focus(function(event) {
@@ -102,11 +103,15 @@ const attachClicks = () => {
     });
 
     $(".answer").keydown(function(event) {
-        if (event.keyCode === 9) return;
-
+        event.preventDefault();
+        
         const cellIndex = ($(this).parent()[0] as HTMLTableCellElement).cellIndex;
 
         switch (event.keyCode) {
+            case 9:
+            case 13:
+                nextCell(this as HTMLInputElement, event.shiftKey);
+                break;
             case 37:
                 const left = $(this)
                     .parent()
@@ -180,7 +185,7 @@ const renderGrid = (across: Array<number>, down: Array<number>) => {
         html += `<th scope="row">${num}</th>`;
         for (let i = 0; i < size; i++)
             html += `<td class="wrong"><div class="sum hidden">${across[i]} x ${num}</div><div></div><input tabindex="${tabIndex++}" class="answer" max="${size *
-                size}" min="1" id="${across[i]}:${num}" readonly></td>`;
+                size}" min="1" id="${across[i]}:${num}"></td>`;
         html += "</tr>";
     }
 
@@ -199,6 +204,7 @@ const renderGrid = (across: Array<number>, down: Array<number>) => {
     }, 100);
 
     rightCount = 0;
+    $(".right-count").text(rightCount);
 };
 
 let lastSize = Number(localStorage.getItem("size"));
@@ -213,8 +219,21 @@ if (size === lastSize && across.length && down.length) {
     renderGrid(across, down);
 }
 
-$("#start-button").click(() => {
-    ({ across, down } = newGrid());
-    $('#start-button').text('New Grid!');
-    renderGrid(across, down);
-});
+let playing = false;
+const start = () => {
+    if(!playing){
+        ({ across, down } = newGrid());
+        $('#start-button').text('Give Up 😢');
+        renderGrid(across, down);
+        $('[tabindex=1]').focus();
+        playing = true;
+    } else {
+        if(!confirm('Are you sure you want to give up on this grid?')) return;
+        clearInterval(timeInterval);
+        $(".grid").empty();
+        $('#start-button').text('Start 🏁');
+        playing = false;
+    }
+};
+
+$("#start-button").click(start);
