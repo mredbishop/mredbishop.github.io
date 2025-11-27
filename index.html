@@ -1,120 +1,136 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-    <title>Number Grid</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
-        integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-    <script src="/fireworks.js"></script>
-    <style>
-        body {
-            width: 100vw;
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-        }
-
-        th,
-        td,
-        .answer {
-            text-align: center;
-            border: 1px solid #888 !important;
-        }
-
-        .answer {
-            width: 100%;
-            font-size: 14px;
-        }
-
-        .table {
-            font-size: 18px;
-        }
-
-        .right {
-            background-color: #97EB93;
-        }
-
-        .wrong {
-            background-color: #FF816D
-        }
-
-        .sum {
-            color: #fff;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        .sum.hidden {
-            visibility: hidden;
-        }
-
-        .table td {
-            padding: .25em !important;
-        }
-
-        .right-count {
-            font-size: 32px;
-            font-weight: 600;
-        }
-
-        .timer {
-            width: 80px;
-            height: 80px;
-        }
-
-        .grid {
-            min-width: 768px;
-        }
-
-
-        @media (max-width: 992px) {
-            .grid {
-                width: 100%;
-                max-width: 100%;
-            }
-        }
-
-        @media print {
-            .buttons {
-                display: none;
-            }
-
-            .timer,
-            .answer {
-                visibility: hidden;
-            }
-
-            th,
-            td,
-            .answer {
-                text-align: center;
-                border: 1px solid #222 !important;
-            }
-
-            .sum {
-                color: #000;
-            }
-            
-            .table-bordered td, .table-bordered th {
-                border: 2px solid #888 !important;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sutton's STEM Stars</title>
+  <style>
+    :root {
+      --bg: radial-gradient(circle at 20% 20%, #0f172a, #0b1020 45%), radial-gradient(circle at 80% 10%, rgba(56,189,248,0.2), transparent 35%), #0b1020;
+      --card: #111827;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --glow-1: linear-gradient(135deg, #22c55e, #0ea5e9);
+      --glow-2: linear-gradient(135deg, #a855f7, #f97316);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Nunito", system-ui, -apple-system, "Comic Sans MS", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+    }
+    .shell {
+      width: min(1080px, 100%);
+      background: var(--card);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .logo {
+      height: 80px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+    p.subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+      margin-top: 16px;
+    }
+    .btn-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      padding: 20px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 170px;
+    }
+    .btn-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(56,189,248,0.4);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+    }
+    .btn-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--glow-1);
+      opacity: 0.25;
+      filter: blur(50px);
+      transform: scale(1.2);
+      z-index: 0;
+    }
+    .btn-card.alt::before { background: var(--glow-2); }
+    .card-body {
+      position: relative;
+      z-index: 1;
+    }
+    .label {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .desc {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    @media (max-width: 640px) {
+      body { padding: 16px; }
+      .shell { padding: 20px; }
+    }
+  </style>
 </head>
-
 <body>
-    <div class="buttons container mt-3 mb-3 text-center">
-        <form>
-            <button id="start-button" type="button" class="btn btn-success">Start 🏁</button>
-            <br>
-            <br>
-            <div><span class="right-count"></span></div>
-        </form>
-    </div>
-    <div class="grid container"></div>
-    <script src="script.js"></script>
-</body>
+  <div class="shell">
+    <header>
+      <img src="sutton-logo-colour.svg" class="logo" alt="Sutton STEM Stars logo">
+      <h1>Sutton's STEM Stars</h1>
+      <p class="subtitle">Pick an adventure: racing or soundboard fun.</p>
+    </header>
 
+    <section class="grid">
+      <a class="btn-card" href="/sutton-racer/sutton-racer.html">
+        <div class="card-body">
+          <div class="label">Sutton Racer</div>
+          <div class="desc">Start your engines and race!</div>
+        </div>
+      </a>
+      <a class="btn-card alt" href="/sutton-sounds/sutton-sounds.html">
+        <div class="card-body">
+          <div class="label">Sutton Sounds</div>
+          <div class="desc">Jump into the sound board.</div>
+        </div>
+      </a>
+    </section>
+  </div>
+</body>
 </html>

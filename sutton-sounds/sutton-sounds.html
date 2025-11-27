@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kid Soundboard Racer</title>
+  <style>
+    :root {
+      --bg: radial-gradient(circle at 20% 20%, #0e1b2b, #0a0f1b 40%), linear-gradient(135deg, #0c1220, #111827);
+      --card: #162033;
+      --accent: #38bdf8;
+      --accent-2: #f97316;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+      --radius: 16px;
+      --grid-gap: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Nunito", "Comic Sans MS", system-ui, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .back-btn {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.06);
+      color: #e2e8f0;
+      border: 1px solid rgba(255,255,255,0.12);
+      font-weight: 800;
+      text-decoration: none;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.4);
+      z-index: 30;
+    }
+    .back-btn:hover { border-color: rgba(56,189,248,0.6); color: #38bdf8; }
+    .app {
+      width: min(1100px, 100%);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      border: 2px solid rgba(255, 255, 255, 0.08);
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #e2e8f0;
+    }
+    .subtitle {
+      font-size: 0.98rem;
+      margin-top: 4px;
+      color: var(--muted);
+    }
+    .badge {
+      background: rgb(184, 77, 0);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .grid {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--grid-gap);
+    }
+    .pad {
+      background: linear-gradient(160deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+      position: relative;
+      min-height: 180px;
+    }
+    .pad:focus-within, .pad:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 32px rgba(0,0,0,0.5);
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .pad.playing {
+      outline: 3px solid var(--accent);
+      outline-offset: 2px;
+    }
+    .pad .heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .pad .sound-name {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #f8fafc;
+    }
+    .pad .binding {
+      background: rgba(56,189,248,0.12);
+      color: #38bdf8;
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-weight: 800;
+      font-size: 0.86rem;
+      border: 1px solid rgba(56,189,248,0.5);
+    }
+    .pad .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    button.action {
+      flex: 1 1 100px;
+      background: #0b1220;
+      color: #f8fafc;
+      padding: 12px;
+      font-weight: 800;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      cursor: pointer;
+      transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease;
+      box-shadow: 0 10px 16px rgba(0,0,0,0.4);
+    }
+    button.action:hover {
+      transform: translateY(-2px);
+      border-color: rgba(56,189,248,0.4);
+    }
+    button.action:active {
+      transform: translateY(0);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .play-btn {
+      background: linear-gradient(135deg, #22c55e, #15803d);
+    }
+    .record-btn {
+      background: linear-gradient(135deg, #ef4444, #7f1d1d);
+    }
+    .stop-btn {
+      background: linear-gradient(135deg, #f97316, #9a3412);
+    }
+    .status-line {
+      margin-top: 10px;
+      font-size: 0.92rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #334155;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.5);
+    }
+    .status-dot.recording { background: #ef4444; }
+    .status-dot.ready { background: #22c55e; }
+    .footer {
+      margin-top: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+    }
+    .footer .keys {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .chip {
+      background: rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255,255,255,0.08);
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #e2e8f0;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .choose-row {
+      margin-top: 10px;
+    }
+    .choose-select {
+      width: 100%;
+      padding: 12px;
+      font-weight: 800;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.12);
+      background: #0b1220;
+      color: #e2e8f0;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    }
+    @media (max-width: 640px) {
+      body { padding: 12px; }
+      .grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+  <a class="back-btn" href="/index.html">← Exit</a>
+  <main class="app">
+    <header>
+      <div>
+        <div class="title">The Sutton STEM Soundboard</div>
+        <div class="subtitle">Tap a pad, press its key, or make your own noise!</div>
+      </div>
+      <div class="badge"><img height="60px" src="/sutton-logo-colour.svg" /></div>
+    </header>
+
+    <section class="grid" id="padGrid" aria-label="Sound pads"></section>
+
+    <div class="footer">
+      <div class="keys">
+        <span class="chip">↑ Up</span>
+        <span class="chip">↓ Down</span>
+        <span class="chip">← Left</span>
+        <span class="chip">→ Right</span>
+        <span class="chip">Space</span>
+        <span class="chip">Mouse click (background)</span>
+      </div>
+      <div class="chip">Mic stays on only while recording</div>
+    </div>
+  </main>
+
+  <script>
+    const builtInSounds = [
+      { label: 'Note 1', file: 'sounds/note1.wav' },
+      { label: 'Note 2', file: 'sounds/note2.wav' },
+      { label: 'Note 3', file: 'sounds/note3.wav' },
+      { label: 'Note 4', file: 'sounds/note4.wav' },
+      { label: 'Note 5', file: 'sounds/note5.wav' },
+      { label: 'Note 6', file: 'sounds/note6.wav' },
+      { label: 'Boing', file: 'sounds/boing.wav' },
+      { label: 'Horn', file: 'sounds/horn.wav' },
+      { label: 'Dog', file: 'sounds/dog.wav' },
+      { label: 'Moo', file: 'sounds/moo.wav' },
+      { label: 'Glass', file: 'sounds/glass.wav' },
+      { label: 'Fart', file: 'sounds/fart.wav' },
+    ];
+
+    const pads = [
+      { id: 'pad1', label: 'Sound 1', file: 'sounds/note1.wav', binding: 'ArrowUp', bindingLabel: '↑ Up' },
+      { id: 'pad2', label: 'Sound 2', file: 'sounds/note2.wav', binding: 'ArrowDown', bindingLabel: '↓ Down' },
+      { id: 'pad3', label: 'Sound 3', file: 'sounds/note3.wav', binding: 'ArrowLeft', bindingLabel: '← Left' },
+      { id: 'pad4', label: 'Sound 4', file: 'sounds/note4.wav', binding: 'ArrowRight', bindingLabel: '→ Right' },
+      { id: 'pad5', label: 'Sound 5', file: 'sounds/note5.wav', binding: 'Space', bindingLabel: 'Space' },
+      { id: 'pad6', label: 'Sound 6', file: 'sounds/note6.wav', binding: 'Mouse', bindingLabel: 'Mouse click' },
+    ];
+
+    const storageKey = (padId) => `kid-soundboard-${padId}`;
+    const padElements = new Map();
+    const audioMap = new Map();
+    let activeRecorder = null;
+
+    function createPadElement(pad) {
+      const el = document.createElement('article');
+      el.className = 'pad';
+      el.tabIndex = 0;
+      el.dataset.padId = pad.id;
+      el.dataset.binding = pad.binding;
+
+      const options = builtInSounds.map((s) => `<option value="${s.file}">${s.label}</option>`).join('');
+
+      el.innerHTML = `
+        <div class="heading">
+          <div class="sound-name">${pad.label}</div>
+          <div class="binding">${pad.bindingLabel}</div>
+        </div>
+        <div class="choose-row">
+            <select class="choose-select" aria-label="Choose sound">
+                ${options}
+                <option value="custom">My Noise!</option>
+            </select>
+        </div>
+        <div class="buttons">
+            <button class="action record-btn" type="button">Make a Noise!</button>
+            </div>
+        <div class="status-line">
+          <span class="status-dot"></span>
+          <span class="status-text">Ready: default sound</span>
+        </div>
+      `;
+
+      const selectEl = el.querySelector('.choose-select');
+      selectEl.addEventListener('change', (e) => {
+        e.stopPropagation();
+        handleSelectChange(pad.id, selectEl.value);
+      });
+
+      const recordBtn = el.querySelector('.record-btn');
+      recordBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleRecording(pad.id);
+      });
+
+      el.addEventListener('click', () => playPad(pad.id));
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          playPad(pad.id);
+        }
+      });
+
+      return el;
+    }
+
+    function setStatus(padId, text, statusClass = 'ready') {
+      const padEl = padElements.get(padId);
+      if (!padEl) return;
+      const dot = padEl.querySelector('.status-dot');
+      const label = padEl.querySelector('.status-text');
+      dot.className = 'status-dot ' + statusClass;
+      label.textContent = text;
+    }
+
+    function updateRecordingUI(padId, isRecording) {
+      const padEl = padElements.get(padId);
+      if (!padEl) return;
+      padEl.classList.toggle('recording', isRecording);
+      const btn = padEl.querySelector('.record-btn');
+      if (btn) btn.textContent = isRecording ? 'Stop' : 'Record';
+    }
+
+    function applyBuiltIn(padId, file) {
+      const sound = builtInSounds.find((s) => s.file === file) || builtInSounds[0];
+      audioMap.set(padId, buildAudio(sound.file));
+      setStatus(padId, `Built-in: ${sound.label}`, 'ready');
+      setSelectForPad(padId, sound.file);
+      try {
+        localStorage.setItem(storageKey(padId), JSON.stringify({ type: 'builtin', file: sound.file }));
+      } catch (err) {
+        console.warn('Could not save built-in choice', err);
+      }
+    }
+
+    function handleSelectChange(padId, value) {
+      if (value === 'custom') {
+        const saved = readSaved(padId);
+        if (saved && saved.type === 'custom' && saved.dataUrl) {
+          audioMap.set(padId, buildAudio(saved.dataUrl));
+          setStatus(padId, 'Custom sound ready', 'ready');
+        } else {
+          setStatus(padId, 'No custom recording yet', 'recording');
+        }
+        return;
+      }
+      applyBuiltIn(padId, value);
+    }
+
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const audioCtx = AudioCtx ? new AudioCtx() : null;
+
+    function buildAudio(src) {
+      const audio = new Audio();
+      audio.addEventListener('error', error => console.warn('Error in buildAudio', error));
+      audio.src = src;
+      audio.preload = 'auto';
+      audio.playsInline = true;
+      audio.load();
+
+      return audio;
+    }
+
+    function readSaved(padId) {
+      const raw = localStorage.getItem(storageKey(padId));
+      if (!raw) return null;
+      try {
+        return JSON.parse(raw);
+      } catch {
+        return raw;
+      }
+    }
+
+    function setSelectForPad(padId, src) {
+      const padEl = padElements.get(padId);
+      if (!padEl) return;
+      const select = padEl.querySelector('.choose-select');
+      if (!select) return;
+      if (src === 'custom') {
+        select.value = 'custom';
+        return;
+      }
+      const found = builtInSounds.find((s) => s.file === src);
+      select.value = found ? found.file : builtInSounds[0].file;
+    }
+
+    function loadAudio(pad) {
+      const saved = readSaved(pad.id);
+      let src = pad.file;
+      let status = 'Ready: default sound';
+
+      if (saved) {
+        if (typeof saved === 'string' && saved.startsWith('data:')) {
+          src = saved;
+          status = 'Custom: saved sound';
+        } else if (saved.type === 'custom' && saved.dataUrl) {
+          src = saved.dataUrl;
+          status = 'Custom: saved sound';
+          setSelectForPad(pad.id, 'custom');
+        } else if (saved.type === 'builtin' && saved.file) {
+          src = saved.file;
+          const label = builtInSounds.find((s) => s.file === saved.file)?.label || 'Built-in sound';
+          status = `Built-in: ${label}`;
+          setSelectForPad(pad.id, saved.file);
+        }
+      }
+
+      const audio = buildAudio(src);
+      audioMap.set(pad.id, audio);
+      setStatus(pad.id, status, 'ready');
+      if (!saved) setSelectForPad(pad.id, src);
+    }
+
+    function playPad(padId) {
+      const audio = audioMap.get(padId);
+      if (!audio) return;
+      audio.currentTime = 0;
+      audio.play().catch(error => console.warn('Playback failed', error));
+      const padEl = padElements.get(padId);
+      if (padEl) {
+        padEl.classList.add('playing');
+        setTimeout(() => padEl.classList.remove('playing'), 180);
+      }
+    }
+
+    async function toggleRecording(padId) {
+      if (activeRecorder && activeRecorder.padId === padId) {
+        stopCapture();
+        return;
+      }
+      if (activeRecorder) stopCapture();
+      startCapture(padId);
+    }
+
+    async function startCapture(padId) {
+      try {
+        if (audioCtx && audioCtx.state === 'suspended') {
+          await audioCtx.resume();
+        }
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        if (!audioCtx) throw new Error('AudioContext not supported in this browser.');
+
+        const source = audioCtx.createMediaStreamSource(stream);
+        const processor = audioCtx.createScriptProcessor(2048, 1, 1);
+        const buffers = [];
+        processor.onaudioprocess = (event) => {
+          const input = event.inputBuffer.getChannelData(0);
+          buffers.push(new Float32Array(input));
+        };
+        source.connect(processor);
+        processor.connect(audioCtx.destination);
+
+        activeRecorder = { padId, stream, source, processor, buffers, sampleRate: audioCtx.sampleRate };
+        updateRecordingUI(padId, true);
+        setStatus(padId, 'Recording... tap Stop when done', 'recording');
+      } catch (err) {
+        console.error(err);
+        setStatus(padId, 'Mic blocked or recording not supported.', 'recording');
+        updateRecordingUI(padId, false);
+      }
+    }
+
+    function stopCapture() {
+      if (!activeRecorder) return;
+      const { padId, stream, source, processor, buffers, sampleRate } = activeRecorder;
+      processor.disconnect();
+      source.disconnect();
+      stream.getTracks().forEach((t) => t.stop());
+      activeRecorder = null;
+      updateRecordingUI(padId, false);
+
+      if (!buffers.length) {
+        setStatus(padId, 'No audio captured. Try again.', 'recording');
+        return;
+      }
+
+      // Flatten Float32 buffers.
+      const length = buffers.reduce((sum, arr) => sum + arr.length, 0);
+      const merged = new Float32Array(length);
+      let offset = 0;
+      for (const arr of buffers) {
+        merged.set(arr, offset);
+        offset += arr.length;
+      }
+
+      const trimmed = trimLeadingSilence(merged, 0.01);
+      const audioBuffer = audioCtx.createBuffer(1, trimmed.length, sampleRate);
+      audioBuffer.copyToChannel(trimmed, 0, 0);
+      const wavBlob = audioBufferToWav(audioBuffer);
+      const url = URL.createObjectURL(wavBlob);
+      audioMap.set(padId, buildAudio(url));
+      setStatus(padId, 'Custom sound ready', 'ready');
+      setSelectForPad(padId, 'custom');
+      saveAudio(padId, wavBlob);
+    }
+
+    async function processAndStoreRecording(blob, padId) {
+      // Convert to WAV for maximum playback compatibility, then save/play.
+      try {
+        if (audioCtx) {
+          const arrayBuffer = await blob.arrayBuffer();
+          const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+          const wavBlob = audioBufferToWav(audioBuffer);
+          const url = URL.createObjectURL(wavBlob);
+          audioMap.set(padId, buildAudio(url));
+          setStatus(padId, 'Custom sound ready', 'ready');
+          saveAudio(padId, wavBlob);
+          return;
+        }
+      } catch (err) {
+        console.warn('WAV conversion failed, falling back to raw blob', err);
+      }
+
+      // Fallback: use original blob.
+      const url = URL.createObjectURL(blob);
+      audioMap.set(padId, buildAudio(url));
+      setStatus(padId, 'Custom sound ready', 'ready');
+      saveAudio(padId, blob);
+    }
+
+    function audioBufferToWav(buffer) {
+      const numOfChan = buffer.numberOfChannels;
+      const sampleRate = buffer.sampleRate;
+      const format = 1; // PCM
+      const bitDepth = 16;
+
+      let offset = 0;
+      const samples = buffer.length;
+      const blockAlign = numOfChan * bitDepth / 8;
+      const byteRate = sampleRate * blockAlign;
+      const dataSize = samples * blockAlign;
+      const bufferLength = 44 + dataSize;
+      const arrayBuffer = new ArrayBuffer(bufferLength);
+      const view = new DataView(arrayBuffer);
+
+      function writeString(str) {
+        for (let i = 0; i < str.length; i++) {
+          view.setUint8(offset + i, str.charCodeAt(i));
+        }
+        offset += str.length;
+      }
+
+      function writeUint32(value) {
+        view.setUint32(offset, value, true);
+        offset += 4;
+      }
+
+      function writeUint16(value) {
+        view.setUint16(offset, value, true);
+        offset += 2;
+      }
+
+      writeString('RIFF');
+      writeUint32(bufferLength - 8);
+      writeString('WAVE');
+      writeString('fmt ');
+      writeUint32(16); // subchunk1 size
+      writeUint16(format);
+      writeUint16(numOfChan);
+      writeUint32(sampleRate);
+      writeUint32(byteRate);
+      writeUint16(blockAlign);
+      writeUint16(bitDepth);
+      writeString('data');
+      writeUint32(dataSize);
+
+      const interleaved = interleave(buffer);
+      for (let i = 0; i < interleaved.length; i++, offset += 2) {
+        view.setInt16(offset, interleaved[i] * 0x7fff, true);
+      }
+
+      return new Blob([arrayBuffer], { type: 'audio/wav' });
+    }
+
+    function interleave(buffer) {
+      const numOfChan = buffer.numberOfChannels;
+      const length = buffer.length * numOfChan;
+      const result = new Float32Array(length);
+      const channelData = [];
+      for (let c = 0; c < numOfChan; c++) channelData.push(buffer.getChannelData(c));
+      let index = 0;
+      for (let i = 0; i < buffer.length; i++) {
+        for (let c = 0; c < numOfChan; c++) {
+          result[index++] = channelData[c][i];
+        }
+      }
+      return result;
+    }
+
+    function trimLeadingSilence(data, threshold = 0.01) {
+      const len = data.length;
+      let start = 0;
+      for (; start < len; start++) {
+        if (Math.abs(data[start]) > threshold) break;
+      }
+      if (start === 0) return data;
+      if (start >= len - 1) return data; // avoid empty clip
+      const out = new Float32Array(len - start);
+      out.set(data.subarray(start));
+      return out;
+    }
+
+    function saveAudio(padId, blob) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        try {
+          const payload = { type: 'custom', dataUrl: reader.result };
+          localStorage.setItem(storageKey(padId), JSON.stringify(payload));
+        } catch (err) {
+          console.warn('Could not save audio', err);
+        }
+      };
+      reader.readAsDataURL(blob);
+    }
+
+    function handleKeydown(e) {
+      const keyMap = {
+        ArrowUp: 'pad1',
+        ArrowDown: 'pad2',
+        ArrowLeft: 'pad3',
+        ArrowRight: 'pad4',
+        ' ': 'pad5',
+        Spacebar: 'pad5',
+      };
+      const padId = keyMap[e.key];
+      if (padId) {
+        e.preventDefault();
+        playPad(padId);
+      }
+    }
+
+    function handleMouseBackground(e) {
+      if (e.target.closest('.pad') || e.target.closest('button')) return;
+      playPad('pad6');
+    }
+
+    function init() {
+      const grid = document.getElementById('padGrid');
+      pads.forEach((pad) => {
+        const el = createPadElement(pad);
+        grid.appendChild(el);
+        padElements.set(pad.id, el);
+        loadAudio(pad);
+      });
+      document.addEventListener('keydown', handleKeydown);
+      document.addEventListener('click', handleMouseBackground);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
