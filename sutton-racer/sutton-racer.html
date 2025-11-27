@@ -58,6 +58,15 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
+        .sutton-bg {
+            background-image: url('/school2.jpg');
+            background-size: cover;
+            background-position: center;
+        }
+        .bg-overlay {
+            background: rgba(0,0,0,0.8);
+        }
+
         .CRT {
             position: relative;
         }
@@ -145,7 +154,8 @@
     </div>
 
     <!-- Main Stage: The Game -->
-    <div class="relative flex-1 h-2/3 md:h-full bg-slate-800 overflow-hidden flex items-center justify-center">
+    <div class="sutton-bg relative flex-1 h-2/3 md:h-full bg-slate-800 overflow-hidden flex items-center justify-center">
+        <div class="bg-overlay  relative flex-1 h-2/3 md:h-full overflow-hidden flex items-center justify-center">
         
         <!-- HUD -->
         <div class="absolute top-4 left-4 z-10 flex gap-4">
@@ -176,6 +186,7 @@
         <!-- Floating Feedback -->
         <div id="feedback-toast" class="absolute bottom-10 px-6 py-3 bg-slate-900/90 text-white rounded-full border border-green-500 shadow-[0_0_15px_rgba(74,222,128,0.3)] transform translate-y-20 opacity-0 transition-all duration-300 font-bold">
             Action Executed
+        </div>
         </div>
     </div>
 
@@ -262,9 +273,9 @@
                 <p class="font-bold text-pink-300">Robot Guide:</p>
                 <p>Step 2: Mix your custom paint color!</p>
                 <div class="space-y-2 mt-2">
-                    <div class="flex items-center gap-2"><span class="w-4 text-red-400">R</span><input type="range" min="0" max="255" value="59" class="w-full h-2 bg-red-900 rounded-lg appearance-none cursor-pointer" oninput="updateCarColor(this.value, null, null)"></div>
-                    <div class="flex items-center gap-2"><span class="w-4 text-green-400">G</span><input type="range" min="0" max="255" value="130" class="w-full h-2 bg-green-900 rounded-lg appearance-none cursor-pointer" oninput="updateCarColor(null, this.value, null)"></div>
-                    <div class="flex items-center gap-2"><span class="w-4 text-blue-400">B</span><input type="range" min="0" max="255" value="246" class="w-full h-2 bg-blue-900 rounded-lg appearance-none cursor-pointer" oninput="updateCarColor(null, null, this.value)"></div>
+                    <div class="flex items-center gap-2"><span class="w-4 text-red-400">Red</span>&nbsp;&nbsp;&nbsp;<input type="range" min="0" max="255" value="59" class="w-full h-2 bg-red-900 rounded-lg appearance-none cursor-pointer" oninput="updateCarColor(this.value, null, null)"></div>
+                    <div class="flex items-center gap-2"><span class="w-4 text-green-400">Green</span>&nbsp;&nbsp;&nbsp;<input type="range" min="0" max="255" value="130" class="w-full h-2 bg-green-900 rounded-lg appearance-none cursor-pointer" oninput="updateCarColor(null, this.value, null)"></div>
+                    <div class="flex items-center gap-2"><span class="w-4 text-blue-400">Blue</span>&nbsp;&nbsp;&nbsp;<input type="range" min="0" max="255" value="246" class="w-full h-2 bg-blue-900 rounded-lg appearance-none cursor-pointer" oninput="updateCarColor(null, null, this.value)"></div>
                 </div>
                 <button onclick="confirmColor()" class="mt-3 w-full py-1 bg-pink-600 hover:bg-pink-500 rounded font-bold">Confirm Paint</button>
             `;
