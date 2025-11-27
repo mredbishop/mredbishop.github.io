@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sutton Racer: Workshop Edition</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="tailwind.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Press+Start+2P&display=swap');
-
         body {
             background-color: #0f172a;
             color: #e2e8f0;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: monospace;
             overflow: hidden;
         }
         .back-btn {
@@ -34,7 +32,7 @@
         }
 
         .pixel-font {
-            font-family: 'Press Start 2P', cursive;
+            font-family: monospace
         }
 
         /* Custom Scrollbar */
@@ -55,7 +53,7 @@
             outline: none;
             color: #4ade80;
             width: 100%;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: monospace;
         }
 
         .sutton-bg {
@@ -113,7 +111,7 @@
         <!-- Header -->
         <div class="p-4 border-b border-slate-700 bg-slate-800 flex justify-between items-center sidebar-header">
             <!-- Restored Title on Left -->
-            <h1 class="text-xl font-bold text-blue-400 pixel-font tracking-tighter">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUTTON RACER</h1>
+            <h1 class="text-xl font-bold text-blue-400 pixel-font tracking-tighter">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUTTON RACER</h1>
 
             <!-- Right side container for Indicator and Logo -->
             <div class="flex items-center gap-4">
