@@ -1,274 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sutton Racer: Workshop Edition</title>
-    <script src="tailwind.min.js"></script>
-    <style>
-        body {
-            background-color: #0f172a;
-            color: #e2e8f0;
-            font-family: monospace;
-            overflow: hidden;
-        }
-        .back-btn {
-            position: fixed;
-            top: 16px;
-            left: 16px;
-            z-index: 50;
-            padding: 10px 14px;
-            border-radius: 12px;
-            background: rgba(15,23,42,0.9);
-            border: 1px solid rgba(56,189,248,0.5);
-            color: #38bdf8;
-            font-weight: 800;
-            text-decoration: none;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
-        }
-        .back-btn:hover {
-            background: rgba(56,189,248,0.12);
-            color: #e2e8f0;
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sutton Racer: Workshop Edition</title>
+        <script src="tailwind.min.js"></script>
+        <style>
+            body {
+                background-color: #0f172a;
+                color: #e2e8f0;
+                font-family: monospace;
+                overflow: hidden;
+            }
+            .back-btn {
+                position: fixed;
+                top: 16px;
+                left: 16px;
+                z-index: 50;
+                padding: 10px 14px;
+                border-radius: 12px;
+                background: rgba(15, 23, 42, 0.9);
+                border: 1px solid rgba(56, 189, 248, 0.5);
+                color: #38bdf8;
+                font-weight: 800;
+                text-decoration: none;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            }
+            .back-btn:hover {
+                background: rgba(56, 189, 248, 0.12);
+                color: #e2e8f0;
+            }
 
-        .pixel-font {
-            font-family: monospace
-        }
+            .pixel-font {
+                font-family: monospace;
+            }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3b82f6;
-            border-radius: 4px;
-        }
+            /* Custom Scrollbar */
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+            ::-webkit-scrollbar-track {
+                background: #1e293b;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: #3b82f6;
+                border-radius: 4px;
+            }
 
-        .console-input {
-            background: transparent;
-            border: none;
-            outline: none;
-            color: #4ade80;
-            width: 100%;
-            font-family: monospace;
-        }
+            .console-input {
+                background: transparent;
+                border: none;
+                outline: none;
+                color: #4ade80;
+                width: 100%;
+                font-family: monospace;
+            }
 
-        .sutton-bg {
-            background-image: url('/school2.jpg');
-            background-size: cover;
-            background-position: center;
-        }
-        .bg-overlay {
-            background: rgba(0,0,0,0.8);
-        }
+            .sutton-bg {
+                background-image: url('/school2.jpg');
+                background-size: cover;
+                background-position: center;
+            }
+            .bg-overlay {
+                background: rgba(0, 0, 0, 0.8);
+            }
 
-        .CRT {
-            position: relative;
-        }
-        .CRT::before {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 10;
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none;
-        }
+            .CRT {
+                position: relative;
+            }
+            .CRT::before {
+                content: ' ';
+                display: block;
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                right: 0;
+                background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                    linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+                z-index: 10;
+                background-size: 100% 2px, 3px 100%;
+                pointer-events: none;
+            }
 
-        /* Animations */
-        @keyframes slideIn {
-            from { transform: translateX(-100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .msg-enter {
-            animation: slideIn 0.3s ease-out forwards;
-        }
+            /* Animations */
+            @keyframes slideIn {
+                from {
+                    transform: translateX(-100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            .msg-enter {
+                animation: slideIn 0.3s ease-out forwards;
+            }
 
-        input[type=range] {
-            -webkit-appearance: none; 
-            background: transparent; 
-        }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-        }
-        input[type=range]:focus {
-            outline: none; 
-        }
-    </style>
-</head>
-<body class="h-screen w-screen flex flex-col md:flex-row">
-    <a class="back-btn" href="/index.html">← Exit</a>
+            input[type='range'] {
+                -webkit-appearance: none;
+                background: transparent;
+            }
+            input[type='range']::-webkit-slider-thumb {
+                -webkit-appearance: none;
+            }
+            input[type='range']:focus {
+                outline: none;
+            }
+        </style>
+    </head>
+    <body class="h-screen w-screen flex flex-col md:flex-row">
+        <a class="back-btn" href="../index.html">← Exit</a>
 
-    <!-- Sidebar: The IDE / Guide -->
-    <div id="sidebar" class="w-full md:w-1/3 h-1/3 md:h-full bg-slate-900 border-r border-slate-700 flex flex-col shadow-2xl z-20">
-        <!-- Header -->
-        <div class="p-4 border-b border-slate-700 bg-slate-800 flex justify-between items-center sidebar-header">
-            <!-- Restored Title on Left -->
-            <h1 class="text-xl font-bold text-blue-400 pixel-font tracking-tighter">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUTTON RACER</h1>
+        <!-- Sidebar: The IDE / Guide -->
+        <div id="sidebar" class="w-full md:w-1/3 h-1/3 md:h-full bg-slate-900 border-r border-slate-700 flex flex-col shadow-2xl z-20">
+            <!-- Header -->
+            <div class="p-4 border-b border-slate-700 bg-slate-800 flex justify-between items-center sidebar-header">
+                <!-- Restored Title on Left -->
+                <h1 class="text-xl font-bold text-blue-400 pixel-font tracking-tighter">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SUTTON RACER
+                </h1>
 
-            <!-- Right side container for Indicator and Logo -->
-            <div class="flex items-center gap-4">
-                <!-- Logo Container Moved to Right -->
-                <div class="h-10 w-auto">
-                    <img src="/sutton-logo-colour.svg" alt="Sutton Logo" class="h-10 w-auto">
+                <!-- Right side container for Indicator and Logo -->
+                <div class="flex items-center gap-4">
+                    <!-- Logo Container Moved to Right -->
+                    <div class="h-10 w-auto">
+                        <img src="../sutton-logo-colour.svg" alt="Sutton Logo" class="h-10 w-auto" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tutorial / Chat Window -->
+            <div id="guide-container" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-900/50">
+                <!-- Initial Welcome Message -->
+                <div class="bg-blue-900/30 border-l-4 border-blue-500 p-3 text-sm rounded msg-enter">
+                    <p class="font-bold text-blue-300">Robot Guide:</p>
+                    <p>Welcome to the Workshop, Awesome Coder! Before we race, we need to build your bot.</p>
+                    <p class="mt-2">Step 1: Choose your bot type!</p>
+
+                    <div class="flex gap-2 mt-3">
+                        <button
+                            onclick="setCarType('racer')"
+                            class="flex-1 py-2 bg-slate-700 hover:bg-slate-600 rounded border border-slate-500 text-xs"
+                        >
+                            🏎️ Speedster
+                        </button>
+                        <button
+                            onclick="setCarType('tank')"
+                            class="flex-1 py-2 bg-slate-700 hover:bg-slate-600 rounded border border-slate-500 text-xs"
+                        >
+                            🚜 Crusher
+                        </button>
+                        <button
+                            onclick="setCarType('ufo')"
+                            class="flex-1 py-2 bg-slate-700 hover:bg-slate-600 rounded border border-slate-500 text-xs"
+                        >
+                            🛸 Saucer
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Console Input -->
+            <div class="p-4 bg-slate-950 border-t border-slate-700">
+                <div class="flex items-center text-green-400 text-lg">
+                    <span class="mr-2">></span>
+                    <input
+                        type="text"
+                        id="command-input"
+                        class="console-input"
+                        placeholder="Waiting for setup..."
+                        disabled
+                        autocomplete="off"
+                    />
+                </div>
+                <div class="mt-2 text-xs text-slate-500 flex justify-between">
+                    <span>Cmds: f(n), b(n), r(deg), l(deg)</span>
+                    <span id="status-light" class="w-2 h-2 rounded-full bg-red-500"></span>
                 </div>
             </div>
         </div>
 
-        <!-- Tutorial / Chat Window -->
-        <div id="guide-container" class="flex-1 p-4 overflow-y-auto space-y-4 bg-slate-900/50">
-            <!-- Initial Welcome Message -->
-            <div class="bg-blue-900/30 border-l-4 border-blue-500 p-3 text-sm rounded msg-enter">
-                <p class="font-bold text-blue-300">Robot Guide:</p>
-                <p>Welcome to the Workshop, Awesome Coder! Before we race, we need to build your bot.</p>
-                <p class="mt-2">Step 1: Choose your bot type!</p>
-                
-                <div class="flex gap-2 mt-3">
-                    <button onclick="setCarType('racer')" class="flex-1 py-2 bg-slate-700 hover:bg-slate-600 rounded border border-slate-500 text-xs">🏎️ Speedster</button>
-                    <button onclick="setCarType('tank')" class="flex-1 py-2 bg-slate-700 hover:bg-slate-600 rounded border border-slate-500 text-xs">🚜 Crusher</button>
-                    <button onclick="setCarType('ufo')" class="flex-1 py-2 bg-slate-700 hover:bg-slate-600 rounded border border-slate-500 text-xs">🛸 Saucer</button>
+        <!-- Main Stage: The Game -->
+        <div class="sutton-bg relative flex-1 h-2/3 md:h-full bg-slate-800 overflow-hidden flex items-center justify-center">
+            <div class="bg-overlay relative flex-1 h-2/3 md:h-full overflow-hidden flex items-center justify-center">
+                <div style="z-index: 1000; position: absolute; top: 150px; left: 40px; color: white">|------25------|</div>
+
+                <!-- HUD -->
+                <div class="absolute top-4 left-4 z-10 flex gap-4">
+                    <div class="bg-slate-900/80 p-2 rounded border border-slate-600 backdrop-blur">
+                        <div class="text-xs text-slate-400">DRIVER</div>
+                        <div id="driver-display" class="text-lg font-bold text-blue-400">UNKNOWN</div>
+                    </div>
+                    <div class="bg-slate-900/80 p-2 rounded border border-slate-600 backdrop-blur">
+                        <div class="text-xs text-slate-400">TIME</div>
+                        <div id="timer-display" class="text-xl font-mono text-yellow-400">00:00.00</div>
+                    </div>
+                </div>
+
+                <div class="absolute top-4 right-4 z-10 flex gap-2">
+                    <button
+                        onclick="executeCommand('reset')"
+                        id="btn-reset"
+                        class="hidden px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-slate-900 font-bold rounded shadow border border-yellow-400 flex items-center gap-2"
+                    >
+                        <span>🏁 Restart</span>
+                    </button>
+                    <button
+                        onclick="exportGame()"
+                        id="btn-export"
+                        class="hidden px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded shadow border border-purple-400 flex items-center gap-2"
+                    >
+                        <span>💾 Save Game</span>
+                    </button>
+                </div>
+
+                <!-- The Game Canvas -->
+                <div class="CRT shadow-2xl border-4 border-slate-700 rounded-lg overflow-hidden bg-black">
+                    <canvas id="gameCanvas" width="800" height="600" class="block"></canvas>
+                </div>
+
+                <!-- Floating Feedback -->
+                <div
+                    id="feedback-toast"
+                    class="absolute bottom-10 px-6 py-3 bg-slate-900/90 text-white rounded-full border border-green-500 shadow-[0_0_15px_rgba(74,222,128,0.3)] transform translate-y-20 opacity-0 transition-all duration-300 font-bold"
+                >
+                    Action Executed
                 </div>
             </div>
         </div>
 
-        <!-- Console Input -->
-        <div class="p-4 bg-slate-950 border-t border-slate-700">
-            <div class="flex items-center text-green-400 text-lg">
-                <span class="mr-2">></span>
-                <input type="text" id="command-input" class="console-input" placeholder="Waiting for setup..." disabled autocomplete="off">
-            </div>
-            <div class="mt-2 text-xs text-slate-500 flex justify-between">
-                <span>Cmds: f(n), b(n), r(deg), l(deg)</span>
-                <span id="status-light" class="w-2 h-2 rounded-full bg-red-500"></span>
-            </div>
-        </div>
-    </div>
+        <script>
+            // --- GAME CONFIG & STATE ---
+            const canvas = document.getElementById('gameCanvas');
+            const ctx = canvas.getContext('2d');
+            const input = document.getElementById('command-input');
+            const guideContainer = document.getElementById('guide-container');
+            const statusLight = document.getElementById('status-light');
+            const timerDisplay = document.getElementById('timer-display');
+            const driverDisplay = document.getElementById('driver-display');
+            const btnReset = document.getElementById('btn-reset');
 
-    <!-- Main Stage: The Game -->
-    <div class="sutton-bg relative flex-1 h-2/3 md:h-full bg-slate-800 overflow-hidden flex items-center justify-center">
-        <div class="bg-overlay  relative flex-1 h-2/3 md:h-full overflow-hidden flex items-center justify-center">
-        <div style="z-index: 1000;position: absolute; top: 150px;left: 40px; color: white">|------25------|</div>
-        
-        <!-- HUD -->
-        <div class="absolute top-4 left-4 z-10 flex gap-4">
-            <div class="bg-slate-900/80 p-2 rounded border border-slate-600 backdrop-blur">
-                <div class="text-xs text-slate-400">DRIVER</div>
-                <div id="driver-display" class="text-lg font-bold text-blue-400">UNKNOWN</div>
-            </div>
-            <div class="bg-slate-900/80 p-2 rounded border border-slate-600 backdrop-blur">
-                <div class="text-xs text-slate-400">TIME</div>
-                <div id="timer-display" class="text-xl font-mono text-yellow-400">00:00.00</div>
-            </div>
-        </div>
+            let gameState = {
+                initialized: false,
+                playing: false,
+                startTime: 0,
+                elapsed: 0,
+                laps: 0,
+                checkpointsHit: [],
+                tutorialStep: 0,
+                commandsAllowed: false,
+                finished: false,
+            };
 
-        <div class="absolute top-4 right-4 z-10 flex gap-2">
-            <button onclick="executeCommand('reset')" id="btn-reset" class="hidden px-4 py-2 bg-yellow-600 hover:bg-yellow-500 text-slate-900 font-bold rounded shadow border border-yellow-400 flex items-center gap-2">
-                <span>🏁 Restart</span>
-            </button>
-            <button onclick="exportGame()" id="btn-export" class="hidden px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded shadow border border-purple-400 flex items-center gap-2">
-                <span>💾 Save Game</span>
-            </button>
-        </div>
+            const car = {
+                x: 100,
+                y: 400,
+                angle: -90, // Starts facing UP
+                speed: 0,
+                size: 20,
+                color: '#3b82f6', // Default Blue
+                type: 'racer', // racer, tank, ufo
+                driverName: 'Guest',
+            };
 
-        <!-- The Game Canvas -->
-        <div class="CRT shadow-2xl border-4 border-slate-700 rounded-lg overflow-hidden bg-black">
-            <canvas id="gameCanvas" width="800" height="600" class="block"></canvas>
-        </div>
+            const particles = [];
+            const trackWidth = 80;
 
-        <!-- Floating Feedback -->
-        <div id="feedback-toast" class="absolute bottom-10 px-6 py-3 bg-slate-900/90 text-white rounded-full border border-green-500 shadow-[0_0_15px_rgba(74,222,128,0.3)] transform translate-y-20 opacity-0 transition-all duration-300 font-bold">
-            Action Executed
-        </div>
-        </div>
-    </div>
+            // Track Logic
+            const trackPath = [
+                { x: 100, y: 500 },
+                { x: 100, y: 200 },
+                { x: 200, y: 100 },
+                { x: 600, y: 100 },
+                { x: 700, y: 200 },
+                { x: 700, y: 500 },
+                { x: 500, y: 500 },
+                { x: 500, y: 300 },
+                { x: 300, y: 300 },
+                { x: 300, y: 300 },
+                { x: 300, y: 500 },
+                { x: 100, y: 500 },
+            ];
 
-    <script>
-        // --- GAME CONFIG & STATE ---
-        const canvas = document.getElementById('gameCanvas');
-        const ctx = canvas.getContext('2d');
-        const input = document.getElementById('command-input');
-        const guideContainer = document.getElementById('guide-container');
-        const statusLight = document.getElementById('status-light');
-        const timerDisplay = document.getElementById('timer-display');
-        const driverDisplay = document.getElementById('driver-display');
-        const btnReset = document.getElementById('btn-reset');
-        
-        let gameState = {
-            initialized: false,
-            playing: false,
-            startTime: 0,
-            elapsed: 0,
-            laps: 0,
-            checkpointsHit: [],
-            tutorialStep: 0,
-            commandsAllowed: false,
-            finished: false
-        };
+            const checkpoints = [
+                { x: 100, y: 350, r: 40, id: 1 },
+                { x: 400, y: 100, r: 40, id: 2 },
+                { x: 700, y: 350, r: 40, id: 3 },
+                { x: 400, y: 300, r: 40, id: 4 },
+            ];
 
-        const car = {
-            x: 100,
-            y: 400,
-            angle: -90, // Starts facing UP
-            speed: 0,
-            size: 20,
-            color: '#3b82f6', // Default Blue
-            type: 'racer', // racer, tank, ufo
-            driverName: 'Guest'
-        };
+            // --- WORKSHOP / SETUP FUNCTIONS ---
 
-        const particles = [];
-        const trackWidth = 80;
-        
-        // Track Logic
-        const trackPath = [
-            {x: 100, y: 500}, 
-            {x: 100, y: 200}, 
-            {x: 200, y: 100}, 
-            {x: 600, y: 100}, 
-            {x: 700, y: 200}, 
-            {x: 700, y: 500}, 
-            {x: 500, y: 500}, 
-            {x: 500, y: 300}, 
-            {x: 300, y: 300}, 
-            {x: 300, y: 300}, 
-            {x: 300, y: 500}, 
-            {x: 100, y: 500}
-        ];
+            let carChoiceMade = false;
+            function setCarType(type) {
+                car.type = type;
+                draw(); // Redraw canvas to show new car immediately (even if engine not running)
+                // Advance Guide
+                if (!carChoiceMade) addMessage('Robot Guide', `Excellent choice! The ${type.toUpperCase()} is a solid build.`);
+                carChoiceMade = true;
+                showColorPicker();
+            }
 
-        const checkpoints = [
-            {x: 100, y: 350, r: 40, id: 1}, 
-            {x: 400, y: 100, r: 40, id: 2}, 
-            {x: 700, y: 350, r: 40, id: 3}, 
-            {x: 400, y: 300, r: 40, id: 4}
-        ];
+            function showColorPicker() {
+                if (document.getElementById('color-picker')) return; // Prevent duplicates
 
-        // --- WORKSHOP / SETUP FUNCTIONS ---
-
-        let carChoiceMade = false;
-        function setCarType(type) {
-            car.type = type;
-            draw(); // Redraw canvas to show new car immediately (even if engine not running)
-            // Advance Guide
-            if(!carChoiceMade) addMessage("Robot Guide", `Excellent choice! The ${type.toUpperCase()} is a solid build.`);
-            carChoiceMade = true;
-            showColorPicker();
-        }
-        
-        function showColorPicker() {
-            if(document.getElementById('color-picker')) return; // Prevent duplicates
-
-            
-            const div = document.createElement('div');
-            div.id = "color-picker";
-            div.className = "bg-blue-900/30 border-l-4 border-pink-500 p-3 text-sm rounded msg-enter mt-2";
-            div.innerHTML = `
+                const div = document.createElement('div');
+                div.id = 'color-picker';
+                div.className = 'bg-blue-900/30 border-l-4 border-pink-500 p-3 text-sm rounded msg-enter mt-2';
+                div.innerHTML = `
                 <p class="font-bold text-pink-300">Robot Guide:</p>
                 <p>Step 2: Mix your custom paint color!</p>
                 <div class="space-y-2 mt-2">
@@ -278,35 +319,34 @@
                 </div>
                 <button onclick="confirmColor()" class="mt-3 w-full py-1 bg-pink-600 hover:bg-pink-500 rounded font-bold">Confirm Paint</button>
             `;
-            guideContainer.appendChild(div);
-            guideContainer.scrollTop = guideContainer.scrollHeight;
-        }
+                guideContainer.appendChild(div);
+                guideContainer.scrollTop = guideContainer.scrollHeight;
+            }
 
-        let tempColor = {r:59, g:130, b:246};
-        function updateCarColor(r, g, b) {
-            if(r !== null) tempColor.r = r;
-            if(g !== null) tempColor.g = g;
-            if(b !== null) tempColor.b = b;
-            car.color = `rgb(${tempColor.r}, ${tempColor.g}, ${tempColor.b})`;
-            draw(); // Live preview
-        }
+            let tempColor = { r: 59, g: 130, b: 246 };
+            function updateCarColor(r, g, b) {
+                if (r !== null) tempColor.r = r;
+                if (g !== null) tempColor.g = g;
+                if (b !== null) tempColor.b = b;
+                car.color = `rgb(${tempColor.r}, ${tempColor.g}, ${tempColor.b})`;
+                draw(); // Live preview
+            }
 
-        let colorConfirmed = false;
-        function confirmColor() {
+            let colorConfirmed = false;
+            function confirmColor() {
+                if (!colorConfirmed) addMessage('Robot Guide', 'Looking stylish!');
+                colorConfirmed = true;
 
-            if(!colorConfirmed) addMessage("Robot Guide", "Looking stylish!");
-            colorConfirmed = true;
+                showNameInput();
+            }
 
-            showNameInput();
-        }
+            function showNameInput() {
+                if (document.getElementById('name-input')) return; // Prevent duplicates
 
-        function showNameInput() {
-            if(document.getElementById('name-input')) return; // Prevent duplicates
-
-            const div = document.createElement('div');
-            div.id = "name-input";
-            div.className = "bg-blue-900/30 border-l-4 border-yellow-500 p-3 text-sm rounded msg-enter mt-2";
-            div.innerHTML = `
+                const div = document.createElement('div');
+                div.id = 'name-input';
+                div.className = 'bg-blue-900/30 border-l-4 border-yellow-500 p-3 text-sm rounded msg-enter mt-2';
+                div.innerHTML = `
                 <p class="font-bold text-yellow-300">Robot Guide:</p>
                 <p>Step 3: What is your Driver Name?</p>
                 <div class="flex gap-2 mt-2">
@@ -314,411 +354,426 @@
                     <button onclick="confirmName()" class="px-4 bg-yellow-600 hover:bg-yellow-500 rounded font-bold">OK</button>
                 </div>
             `;
-            guideContainer.appendChild(div);
-            guideContainer.scrollTop = guideContainer.scrollHeight;
-        }
+                guideContainer.appendChild(div);
+                guideContainer.scrollTop = guideContainer.scrollHeight;
+            }
 
-        function confirmName() {
-            const nameVal = document.getElementById('driver-input').value || "Racer X";
-            car.driverName = nameVal;
-            driverDisplay.textContent = nameVal.toUpperCase();
-            
-            // Show Init Button
-            const div = document.createElement('div');
-            div.className = "bg-blue-900/30 border-l-4 border-green-500 p-3 text-sm rounded msg-enter mt-2";
-            div.innerHTML = `
+            function confirmName() {
+                const nameVal = document.getElementById('driver-input').value || 'Racer X';
+                car.driverName = nameVal;
+                driverDisplay.textContent = nameVal.toUpperCase();
+
+                // Show Init Button
+                const div = document.createElement('div');
+                div.className = 'bg-blue-900/30 border-l-4 border-green-500 p-3 text-sm rounded msg-enter mt-2';
+                div.innerHTML = `
                 <p class="font-bold text-green-300">Robot Guide:</p>
                 <p>Setup Complete! Systems Green.</p>
                 <button onclick="startEngine()" class="mt-3 w-full py-2 bg-green-600 hover:bg-green-500 text-white font-bold rounded shadow transition-all">
                     Start Engine!
                 </button>
             `;
-            guideContainer.appendChild(div);
-            guideContainer.scrollTop = guideContainer.scrollHeight;
-        }
-
-        function startEngine() {
-            // Disable setup buttons if any exist
-            document.querySelectorAll('button').forEach(b => {
-                if(b.textContent !== 'Start Engine!' && !b.id) b.disabled = true;
-            });
-            
-            gameState.initialized = true;
-            initGame();
-
-            addMessage("Robot Guide", "Vroooom! Engine Online.");
-            addMessage("Robot Guide", "TUTORIAL: Type 'f 75' (forward 75) below to move up the track!");
-            
-            input.disabled = false;
-            input.placeholder = "Enter command...";
-            input.focus();
-            gameState.commandsAllowed = true;
-            statusLight.classList.replace('bg-red-500', 'bg-green-500');
-            gameState.tutorialStep = 2; // Jumping into the move tutorial
-        }
-
-
-        // --- CORE GAME ENGINE ---
-
-        function initGame() {
-            requestAnimationFrame(gameLoop);
-            resetCar();
-        }
-
-        function resetCar() {
-            car.x = 100;
-            car.y = 400;
-            car.angle = -90; 
-            car.speed = 0;
-            gameState.laps = 0;
-            gameState.checkpointsHit = [];
-            gameState.elapsed = 0;
-            gameState.startTime = 0;
-            gameState.finished = false;
-            gameState.playing = false;
-            btnReset.classList.add('hidden');
-            updateHUD();
-        }
-
-        function updateHUD() {
-            const mins = Math.floor(gameState.elapsed / 60000).toString().padStart(2, '0');
-            const secs = Math.floor((gameState.elapsed % 60000) / 1000).toString().padStart(2, '0');
-            const ms = Math.floor((gameState.elapsed % 1000) / 10).toString().padStart(2, '0');
-            timerDisplay.textContent = `${mins}:${secs}.${ms}`;
-        }
-
-        function checkOnTrack(x, y) {
-            const path = new Path2D();
-            path.moveTo(trackPath[0].x, trackPath[0].y);
-            for (let i = 1; i < trackPath.length; i++) {
-                path.lineTo(trackPath[i].x, trackPath[i].y);
-            }
-            path.closePath();
-
-            ctx.save();
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            ctx.lineWidth = trackWidth;
-            const isSafe = ctx.isPointInStroke(path, x, y);
-            ctx.restore();
-            return isSafe;
-        }
-
-        function gameLoop() {
-            updatePhysics();
-            draw();
-            if (gameState.playing) gameState.elapsed = Date.now() - gameState.startTime;
-            updateHUD();
-            requestAnimationFrame(gameLoop);
-        }
-
-        function updatePhysics() {
-            if (car.speed !== 0) {
-                const rad = car.angle * Math.PI / 180;
-                car.x += Math.cos(rad) * car.speed;
-                car.y += Math.sin(rad) * car.speed;
-                
-                if(Math.random() > 0.5) {
-                    particles.push({
-                        x: car.x - Math.cos(rad) * 15,
-                        y: car.y - Math.sin(rad) * 15,
-                        vx: (Math.random() - 0.5),
-                        vy: (Math.random() - 0.5),
-                        life: 1.0
-                    });
-                }
+                guideContainer.appendChild(div);
+                guideContainer.scrollTop = guideContainer.scrollHeight;
             }
 
-            for(let i = particles.length - 1; i >= 0; i--) {
-                particles[i].x += particles[i].vx;
-                particles[i].y += particles[i].vy;
-                particles[i].life -= 0.05;
-                if(particles[i].life <= 0) particles.splice(i, 1);
+            function startEngine() {
+                // Disable setup buttons if any exist
+                document.querySelectorAll('button').forEach(b => {
+                    if (b.textContent !== 'Start Engine!' && !b.id) b.disabled = true;
+                });
+
+                gameState.initialized = true;
+                initGame();
+
+                addMessage('Robot Guide', 'Vroooom! Engine Online.');
+                addMessage('Robot Guide', "TUTORIAL: Type 'f 75' (forward 75) below to move up the track!");
+
+                input.disabled = false;
+                input.placeholder = 'Enter command...';
+                input.focus();
+                gameState.commandsAllowed = true;
+                statusLight.classList.replace('bg-red-500', 'bg-green-500');
+                gameState.tutorialStep = 2; // Jumping into the move tutorial
             }
 
-            checkpoints.forEach(cp => {
-                const dist = Math.hypot(car.x - cp.x, car.y - cp.y);
-                if (dist < cp.r && !gameState.checkpointsHit.includes(cp.id)) {
-                    gameState.checkpointsHit.push(cp.id);
-                    showFeedback("Checkpoint!", "blue");
-                }
-            });
+            // --- CORE GAME ENGINE ---
 
-            if (gameState.checkpointsHit.length === 4) {
-                const distToStart = Math.hypot(car.x - 100, car.y - 400);
-                if (distToStart < 40 && gameState.playing) finishRace();
-            }
-        }
-
-        function draw() {
-            // Background
-            ctx.fillStyle = '#334155';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Track
-            ctx.lineCap = 'round';
-            ctx.lineJoin = 'round';
-            
-            // Grass Border
-            ctx.strokeStyle = '#1e293b';
-            ctx.lineWidth = trackWidth + 20;
-            drawPath(ctx, trackPath, true);
-
-            // Asphalt
-            ctx.strokeStyle = '#475569';
-            ctx.lineWidth = trackWidth;
-            drawPath(ctx, trackPath, true);
-            
-            // Center Lines
-            ctx.strokeStyle = '#94a3b8';
-            ctx.lineWidth = 2;
-            ctx.setLineDash([10, 15]);
-            drawPath(ctx, trackPath, true);
-            ctx.setLineDash([]);
-
-            // Checkpoints
-            checkpoints.forEach(cp => {
-                ctx.beginPath();
-                ctx.arc(cp.x, cp.y, 10, 0, Math.PI * 2);
-                ctx.fillStyle = gameState.checkpointsHit.includes(cp.id) ? '#4ade80' : '#ef4444';
-                ctx.fill();
-            });
-
-            // Start Line
-            ctx.save();
-            ctx.translate(100, 400);
-            ctx.fillStyle = '#ffffff';
-            for(let i=0; i<4; i++) {
-                ctx.fillRect(-40 + (i*20), -5, 10, 10);
-                ctx.fillStyle = ctx.fillStyle === '#000000' ? '#ffffff' : '#000000';
-            }
-            ctx.restore();
-
-            // Particles
-            particles.forEach(p => {
-                ctx.globalAlpha = p.life;
-                ctx.fillStyle = '#cbd5e1';
-                ctx.fillRect(p.x, p.y, 3, 3);
-            });
-            ctx.globalAlpha = 1;
-
-            // DRAW CAR (Based on Type)
-            ctx.save();
-            ctx.translate(car.x, car.y);
-            ctx.rotate(car.angle * Math.PI / 180);
-            
-            // Draw Car Shadow
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = car.color;
-
-            if (car.type === 'tank') {
-                // TANK DRAWING
-                ctx.fillStyle = '#333';
-                ctx.fillRect(-18, -15, 36, 6); // Left Tread
-                ctx.fillRect(-18, 9, 36, 6);   // Right Tread
-                ctx.fillStyle = car.color;
-                ctx.fillRect(-12, -10, 24, 20); // Body
-                ctx.fillStyle = '#111';
-                ctx.fillRect(0, -3, 20, 6); // Turret/Barrel
-            } 
-            else if (car.type === 'ufo') {
-                // UFO DRAWING
-                ctx.fillStyle = car.color;
-                ctx.beginPath();
-                ctx.arc(0, 0, 15, 0, Math.PI * 2); // Main Disc
-                ctx.fill();
-                ctx.fillStyle = '#bef264';
-                ctx.beginPath();
-                ctx.arc(0, 0, 6, 0, Math.PI * 2); // Cockpit
-                ctx.fill();
-                // Little lights
-                ctx.fillStyle = 'white';
-                for(let i=0; i<4; i++) ctx.fillRect(10, -10+(i*5), 2, 2); 
-            } 
-            else {
-                // RACER DRAWING (Default)
-                ctx.fillStyle = car.color;
-                ctx.fillRect(-15, -10, 30, 20); // Body
-                ctx.fillStyle = '#93c5fd';
-                ctx.fillRect(0, -8, 8, 16); // Windshield
-                ctx.fillStyle = 'black'; // Wheels
-                ctx.fillRect(-12, -12, 8, 4); ctx.fillRect(-12, 8, 8, 4);
-                ctx.fillRect(8, -12, 8, 4); ctx.fillRect(8, 8, 8, 4);
-            }
-
-            // Headlights (Common)
-            if (car.type !== 'ufo') {
-                ctx.fillStyle = '#fef08a';
-                ctx.globalAlpha = 0.6;
-                ctx.beginPath(); ctx.arc(15, -5, 5, 0, Math.PI * 2); ctx.fill();
-                ctx.beginPath(); ctx.arc(15, 5, 5, 0, Math.PI * 2); ctx.fill();
-            }
-
-            ctx.restore();
-        }
-
-        function drawPath(context, points, close) {
-            context.beginPath();
-            context.moveTo(points[0].x, points[0].y);
-            for (let i = 1; i < points.length; i++) {
-                context.lineTo(points[i].x, points[i].y);
-            }
-            if (close) context.closePath();
-            context.stroke();
-        }
-
-        function finishRace() {
-            gameState.playing = false;
-            gameState.finished = true;
-            showFeedback(`Time: ${timerDisplay.textContent}`, "purple");
-            btnReset.classList.remove('hidden');
-
-            if(gameState.tutorialStep < 4) {
-                 addMessage("Robot Guide", `AMAZING! You finished in ${timerDisplay.textContent}. Save your game or Restart to try again!`);
-                 document.getElementById('btn-export').classList.remove('hidden');
-                 gameState.tutorialStep = 5;
-            } else {
-                 addMessage("Robot Guide", `Race Complete! Hit Restart to go again.`);
-            }
-        }
-
-        // --- COMMANDS ---
-
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const cmd = input.value.trim().toLowerCase();
-                input.value = '';
-                executeCommand(cmd);
-            }
-        });
-
-        async function executeCommand(cmdStr) {
-            if (!gameState.commandsAllowed) return;
-
-            if (!gameState.playing && !gameState.finished && cmdStr !== 'reset') {
-                gameState.playing = true;
-                gameState.startTime = Date.now();
-            }
-
-            const savedState = { ...car };
-            addMessage(car.driverName, cmdStr); // Use Custom Name
-
-            const parts = cmdStr.split(' ');
-            const action = parts[0];
-            const value = parseInt(parts[1]);
-
-            if (cmdStr === 'reset') {
+            function initGame() {
+                requestAnimationFrame(gameLoop);
                 resetCar();
-                addMessage("Robot Guide", "Back to start!");
-                return;
             }
 
-            if (isNaN(value) && ['f','forward','fd','b','backward','bk','l','left','lt','r','right','rt'].includes(action)) {
-                addMessage("Error", "Need a number! Try 'f 50'.");
-                return;
+            function resetCar() {
+                car.x = 100;
+                car.y = 400;
+                car.angle = -90;
+                car.speed = 0;
+                gameState.laps = 0;
+                gameState.checkpointsHit = [];
+                gameState.elapsed = 0;
+                gameState.startTime = 0;
+                gameState.finished = false;
+                gameState.playing = false;
+                btnReset.classList.add('hidden');
+                updateHUD();
             }
 
-            // Execute Animation
-            if (['f','forward','fd'].includes(action)) await animateMove(value);
-            else if (['b','backward','bk'].includes(action)) await animateMove(-value);
-            else if (['l','left','lt'].includes(action)) await animateTurn(-value);
-            else if (['r','right','rt'].includes(action)) await animateTurn(value);
-            else {
-                addMessage("Error", "Unknown command.");
-                return;
+            function updateHUD() {
+                const mins = Math.floor(gameState.elapsed / 60000)
+                    .toString()
+                    .padStart(2, '0');
+                const secs = Math.floor((gameState.elapsed % 60000) / 1000)
+                    .toString()
+                    .padStart(2, '0');
+                const ms = Math.floor((gameState.elapsed % 1000) / 10)
+                    .toString()
+                    .padStart(2, '0');
+                timerDisplay.textContent = `${mins}:${secs}.${ms}`;
             }
 
-            // Crash Check
-            if (!checkOnTrack(car.x, car.y)) {
-                showFeedback("CRASH!", "red");
-                addMessage("Error", "Off track! Undoing.");
-                await new Promise(r => setTimeout(r, 600));
-                // Revert
-                Object.assign(car, savedState);
-            }
-            
-            // Tutorial Checks
-            if(gameState.tutorialStep === 2 && ['f','fd','forward'].includes(action)) {
-                gameState.tutorialStep = 3;
-                setTimeout(() => addMessage("Robot Guide", "Good! Now turn right at the corner (try 'r 45')."), 500);
-            }
-            else if(gameState.tutorialStep === 3 && ['r','rt','right'].includes(action)) {
-                gameState.tutorialStep = 4;
-                setTimeout(() => addMessage("Robot Guide", "Perfect! Now finish the lap!"), 500);
-            }
-        }
+            function checkOnTrack(x, y) {
+                const path = new Path2D();
+                path.moveTo(trackPath[0].x, trackPath[0].y);
+                for (let i = 1; i < trackPath.length; i++) {
+                    path.lineTo(trackPath[i].x, trackPath[i].y);
+                }
+                path.closePath();
 
-        function animateMove(dist) {
-            dist *= 5.5;
-            return new Promise(resolve => {
-                const steps = Math.abs(dist);
-                const dir = dist > 0 ? 1 : -1;
-                let moved = 0;
-                const interval = setInterval(() => {
-                    if (moved >= steps) {
-                        car.speed = 0; clearInterval(interval); resolve();
-                    } else {
-                        car.speed = dir * 4; moved += 4;
+                ctx.save();
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.lineWidth = trackWidth;
+                const isSafe = ctx.isPointInStroke(path, x, y);
+                ctx.restore();
+                return isSafe;
+            }
+
+            function gameLoop() {
+                updatePhysics();
+                draw();
+                if (gameState.playing) gameState.elapsed = Date.now() - gameState.startTime;
+                updateHUD();
+                requestAnimationFrame(gameLoop);
+            }
+
+            function updatePhysics() {
+                if (car.speed !== 0) {
+                    const rad = (car.angle * Math.PI) / 180;
+                    car.x += Math.cos(rad) * car.speed;
+                    car.y += Math.sin(rad) * car.speed;
+
+                    if (Math.random() > 0.5) {
+                        particles.push({
+                            x: car.x - Math.cos(rad) * 15,
+                            y: car.y - Math.sin(rad) * 15,
+                            vx: Math.random() - 0.5,
+                            vy: Math.random() - 0.5,
+                            life: 1.0,
+                        });
                     }
-                }, 8);
-            });
-        }
+                }
 
-        function animateTurn(deg) {
-            return new Promise(resolve => {
-                const steps = Math.abs(deg);
-                const dir = deg > 0 ? 1 : -1;
-                let turned = 0;
-                const interval = setInterval(() => {
-                    if (turned >= steps) {
-                        clearInterval(interval); resolve();
-                    } else {
-                        car.angle += dir; 
-                        turned++;
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    particles[i].x += particles[i].vx;
+                    particles[i].y += particles[i].vy;
+                    particles[i].life -= 0.05;
+                    if (particles[i].life <= 0) particles.splice(i, 1);
+                }
+
+                checkpoints.forEach(cp => {
+                    const dist = Math.hypot(car.x - cp.x, car.y - cp.y);
+                    if (dist < cp.r && !gameState.checkpointsHit.includes(cp.id)) {
+                        gameState.checkpointsHit.push(cp.id);
+                        showFeedback('Checkpoint!', 'blue');
                     }
-                }, 4);
+                });
+
+                if (gameState.checkpointsHit.length === 4) {
+                    const distToStart = Math.hypot(car.x - 100, car.y - 400);
+                    if (distToStart < 40 && gameState.playing) finishRace();
+                }
+            }
+
+            function draw() {
+                // Background
+                ctx.fillStyle = '#334155';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Track
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                // Grass Border
+                ctx.strokeStyle = '#1e293b';
+                ctx.lineWidth = trackWidth + 20;
+                drawPath(ctx, trackPath, true);
+
+                // Asphalt
+                ctx.strokeStyle = '#475569';
+                ctx.lineWidth = trackWidth;
+                drawPath(ctx, trackPath, true);
+
+                // Center Lines
+                ctx.strokeStyle = '#94a3b8';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([10, 15]);
+                drawPath(ctx, trackPath, true);
+                ctx.setLineDash([]);
+
+                // Checkpoints
+                checkpoints.forEach(cp => {
+                    ctx.beginPath();
+                    ctx.arc(cp.x, cp.y, 10, 0, Math.PI * 2);
+                    ctx.fillStyle = gameState.checkpointsHit.includes(cp.id) ? '#4ade80' : '#ef4444';
+                    ctx.fill();
+                });
+
+                // Start Line
+                ctx.save();
+                ctx.translate(100, 400);
+                ctx.fillStyle = '#ffffff';
+                for (let i = 0; i < 4; i++) {
+                    ctx.fillRect(-40 + i * 20, -5, 10, 10);
+                    ctx.fillStyle = ctx.fillStyle === '#000000' ? '#ffffff' : '#000000';
+                }
+                ctx.restore();
+
+                // Particles
+                particles.forEach(p => {
+                    ctx.globalAlpha = p.life;
+                    ctx.fillStyle = '#cbd5e1';
+                    ctx.fillRect(p.x, p.y, 3, 3);
+                });
+                ctx.globalAlpha = 1;
+
+                // DRAW CAR (Based on Type)
+                ctx.save();
+                ctx.translate(car.x, car.y);
+                ctx.rotate((car.angle * Math.PI) / 180);
+
+                // Draw Car Shadow
+                ctx.shadowBlur = 10;
+                ctx.shadowColor = car.color;
+
+                if (car.type === 'tank') {
+                    // TANK DRAWING
+                    ctx.fillStyle = '#333';
+                    ctx.fillRect(-18, -15, 36, 6); // Left Tread
+                    ctx.fillRect(-18, 9, 36, 6); // Right Tread
+                    ctx.fillStyle = car.color;
+                    ctx.fillRect(-12, -10, 24, 20); // Body
+                    ctx.fillStyle = '#111';
+                    ctx.fillRect(0, -3, 20, 6); // Turret/Barrel
+                } else if (car.type === 'ufo') {
+                    // UFO DRAWING
+                    ctx.fillStyle = car.color;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 15, 0, Math.PI * 2); // Main Disc
+                    ctx.fill();
+                    ctx.fillStyle = '#bef264';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 6, 0, Math.PI * 2); // Cockpit
+                    ctx.fill();
+                    // Little lights
+                    ctx.fillStyle = 'white';
+                    for (let i = 0; i < 4; i++) ctx.fillRect(10, -10 + i * 5, 2, 2);
+                } else {
+                    // RACER DRAWING (Default)
+                    ctx.fillStyle = car.color;
+                    ctx.fillRect(-15, -10, 30, 20); // Body
+                    ctx.fillStyle = '#93c5fd';
+                    ctx.fillRect(0, -8, 8, 16); // Windshield
+                    ctx.fillStyle = 'black'; // Wheels
+                    ctx.fillRect(-12, -12, 8, 4);
+                    ctx.fillRect(-12, 8, 8, 4);
+                    ctx.fillRect(8, -12, 8, 4);
+                    ctx.fillRect(8, 8, 8, 4);
+                }
+
+                // Headlights (Common)
+                if (car.type !== 'ufo') {
+                    ctx.fillStyle = '#fef08a';
+                    ctx.globalAlpha = 0.6;
+                    ctx.beginPath();
+                    ctx.arc(15, -5, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.beginPath();
+                    ctx.arc(15, 5, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+
+            function drawPath(context, points, close) {
+                context.beginPath();
+                context.moveTo(points[0].x, points[0].y);
+                for (let i = 1; i < points.length; i++) {
+                    context.lineTo(points[i].x, points[i].y);
+                }
+                if (close) context.closePath();
+                context.stroke();
+            }
+
+            function finishRace() {
+                gameState.playing = false;
+                gameState.finished = true;
+                showFeedback(`Time: ${timerDisplay.textContent}`, 'purple');
+                btnReset.classList.remove('hidden');
+
+                if (gameState.tutorialStep < 4) {
+                    addMessage(
+                        'Robot Guide',
+                        `AMAZING! You finished in ${timerDisplay.textContent}. Save your game or Restart to try again!`
+                    );
+                    document.getElementById('btn-export').classList.remove('hidden');
+                    gameState.tutorialStep = 5;
+                } else {
+                    addMessage('Robot Guide', `Race Complete! Hit Restart to go again.`);
+                }
+            }
+
+            // --- COMMANDS ---
+
+            input.addEventListener('keydown', e => {
+                if (e.key === 'Enter') {
+                    const cmd = input.value.trim().toLowerCase();
+                    input.value = '';
+                    executeCommand(cmd);
+                }
             });
-        }
 
-        function addMessage(sender, text) {
-            const div = document.createElement('div');
-            const isGuide = sender === 'Robot Guide';
-            const isError = sender === 'Error';
-            const color = isGuide ? 'text-blue-300' : (isError ? 'text-red-400' : 'text-green-300');
-            const bg = isGuide ? 'bg-blue-900/20' : 'bg-transparent';
-            
-            div.className = `p-2 text-sm rounded msg-enter ${bg} border-l-2 border-slate-700 mb-2`;
-            div.innerHTML = `<span class="${color} font-bold">${sender}:</span> ${text}`;
-            guideContainer.appendChild(div);
-            guideContainer.scrollTop = guideContainer.scrollHeight;
-        }
+            async function executeCommand(cmdStr) {
+                if (!gameState.commandsAllowed) return;
 
-        function showFeedback(text, color) {
-            const toast = document.getElementById('feedback-toast');
-            toast.textContent = text;
-            toast.style.borderColor = color === "purple" ? "#a855f7" : (color === "red" ? "#ef4444" : "#4ade80");
-            toast.classList.remove('opacity-0', 'translate-y-20');
-            setTimeout(() => toast.classList.add('opacity-0', 'translate-y-20'), 2000);
-        }
+                if (!gameState.playing && !gameState.finished && cmdStr !== 'reset') {
+                    gameState.playing = true;
+                    gameState.startTime = Date.now();
+                }
 
-        function exportGame() {
-            let htmlContent = document.documentElement.outerHTML;
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(htmlContent, 'text/html');
+                const savedState = { ...car };
+                addMessage(car.driverName, cmdStr); // Use Custom Name
 
-            // Reset UI for saved game
-            doc.getElementById('guide-container').innerHTML = `
+                const parts = cmdStr.split(' ');
+                const action = parts[0];
+                const value = parseInt(parts[1]);
+
+                if (cmdStr === 'reset') {
+                    resetCar();
+                    addMessage('Robot Guide', 'Back to start!');
+                    return;
+                }
+
+                if (isNaN(value) && ['f', 'forward', 'fd', 'b', 'backward', 'bk', 'l', 'left', 'lt', 'r', 'right', 'rt'].includes(action)) {
+                    addMessage('Error', "Need a number! Try 'f 50'.");
+                    return;
+                }
+
+                // Execute Animation
+                if (['f', 'forward', 'fd'].includes(action)) await animateMove(value);
+                else if (['b', 'backward', 'bk'].includes(action)) await animateMove(-value);
+                else if (['l', 'left', 'lt'].includes(action)) await animateTurn(-value);
+                else if (['r', 'right', 'rt'].includes(action)) await animateTurn(value);
+                else {
+                    addMessage('Error', 'Unknown command.');
+                    return;
+                }
+
+                // Crash Check
+                if (!checkOnTrack(car.x, car.y)) {
+                    showFeedback('CRASH!', 'red');
+                    addMessage('Error', 'Off track! Undoing.');
+                    await new Promise(r => setTimeout(r, 600));
+                    // Revert
+                    Object.assign(car, savedState);
+                }
+
+                // Tutorial Checks
+                if (gameState.tutorialStep === 2 && ['f', 'fd', 'forward'].includes(action)) {
+                    gameState.tutorialStep = 3;
+                    setTimeout(() => addMessage('Robot Guide', "Good! Now turn right at the corner (try 'r 45')."), 500);
+                } else if (gameState.tutorialStep === 3 && ['r', 'rt', 'right'].includes(action)) {
+                    gameState.tutorialStep = 4;
+                    setTimeout(() => addMessage('Robot Guide', 'Perfect! Now finish the lap!'), 500);
+                }
+            }
+
+            function animateMove(dist) {
+                dist *= 5.5;
+                return new Promise(resolve => {
+                    const steps = Math.abs(dist);
+                    const dir = dist > 0 ? 1 : -1;
+                    let moved = 0;
+                    const interval = setInterval(() => {
+                        if (moved >= steps) {
+                            car.speed = 0;
+                            clearInterval(interval);
+                            resolve();
+                        } else {
+                            car.speed = dir * 4;
+                            moved += 4;
+                        }
+                    }, 8);
+                });
+            }
+
+            function animateTurn(deg) {
+                return new Promise(resolve => {
+                    const steps = Math.abs(deg);
+                    const dir = deg > 0 ? 1 : -1;
+                    let turned = 0;
+                    const interval = setInterval(() => {
+                        if (turned >= steps) {
+                            clearInterval(interval);
+                            resolve();
+                        } else {
+                            car.angle += dir;
+                            turned++;
+                        }
+                    }, 4);
+                });
+            }
+
+            function addMessage(sender, text) {
+                const div = document.createElement('div');
+                const isGuide = sender === 'Robot Guide';
+                const isError = sender === 'Error';
+                const color = isGuide ? 'text-blue-300' : isError ? 'text-red-400' : 'text-green-300';
+                const bg = isGuide ? 'bg-blue-900/20' : 'bg-transparent';
+
+                div.className = `p-2 text-sm rounded msg-enter ${bg} border-l-2 border-slate-700 mb-2`;
+                div.innerHTML = `<span class="${color} font-bold">${sender}:</span> ${text}`;
+                guideContainer.appendChild(div);
+                guideContainer.scrollTop = guideContainer.scrollHeight;
+            }
+
+            function showFeedback(text, color) {
+                const toast = document.getElementById('feedback-toast');
+                toast.textContent = text;
+                toast.style.borderColor = color === 'purple' ? '#a855f7' : color === 'red' ? '#ef4444' : '#4ade80';
+                toast.classList.remove('opacity-0', 'translate-y-20');
+                setTimeout(() => toast.classList.add('opacity-0', 'translate-y-20'), 2000);
+            }
+
+            function exportGame() {
+                let htmlContent = document.documentElement.outerHTML;
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(htmlContent, 'text/html');
+
+                // Reset UI for saved game
+                doc.getElementById('guide-container').innerHTML = `
                 <div class="bg-purple-900/30 border-l-4 border-purple-500 p-3 text-sm rounded">
                     <p class="font-bold text-purple-300">Robot Guide:</p>
                     <p>Game Loaded. Driver: ${car.driverName}</p>
                 </div>
             `;
-            doc.getElementById('btn-export').remove();
-            doc.getElementById('btn-reset').remove();
-            
-            // Embed current car state into the init script
-            const script = doc.createElement('script');
-            script.textContent = `
+                doc.getElementById('btn-export').remove();
+                doc.getElementById('btn-reset').remove();
+
+                // Embed current car state into the init script
+                const script = doc.createElement('script');
+                script.textContent = `
                 window.onload = function() {
                     gameState.initialized = true;
                     gameState.commandsAllowed = true;
@@ -730,22 +785,21 @@
                     initGame();
                 };
             `;
-            doc.body.appendChild(script);
+                doc.body.appendChild(script);
 
-            const blob = new Blob([doc.documentElement.outerHTML], {type: 'text/html'});
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'sutton-racer-custom.html';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            addMessage("Robot Guide", "Game Saved!");
-        }
-        
-        // Start Render Loop immediately for vehicle preview
-        requestAnimationFrame(draw);
+                const blob = new Blob([doc.documentElement.outerHTML], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'sutton-racer-custom.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                addMessage('Robot Guide', 'Game Saved!');
+            }
 
-    </script>
-</body>
+            // Start Render Loop immediately for vehicle preview
+            requestAnimationFrame(draw);
+        </script>
+    </body>
 </html>
