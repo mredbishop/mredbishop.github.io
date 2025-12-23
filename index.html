@@ -68,10 +68,10 @@
                             'height': '100%',
                             'display': 'flex',
                             'flexDirection': 'column',
-                            'transition': 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                             'border': '1px solid #334155',
                             'bgcolor': active ? '#1e293b' : 'rgba(30, 41, 59, 0.3)',
                             'opacity': active ? 1 : 0.7,
+                            'transition': 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                             '&:hover': active
                                 ? {
                                       transform: 'translateY(-8px)',
@@ -175,17 +175,17 @@
                                 />
 
                                 <ToolCard
-                                    title="HTTP Header Lab"
-                                    desc="Analyze and debug HTTP response headers and security policies."
-                                    icon="security"
-                                    link="#"
-                                    active={false}
-                                />
-
-                                <ToolCard
                                     title="SSL Certificate Tool"
                                     desc="Inspect expiry, chain of trust, and cipher suites for any domain."
                                     icon="verified_user"
+                                    link="./ssl-tools/index.html"
+                                    active={true}
+                                />
+
+                                <ToolCard
+                                    title="HTTP Header Lab"
+                                    desc="Analyze and debug HTTP response headers and security policies."
+                                    icon="security"
                                     link="#"
                                     active={false}
                                 />

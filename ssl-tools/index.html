@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Tool Box - SSL Analyzer</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+
+        <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <script src="https://unpkg.com/@mui/material@5.15.0/umd/material-ui.production.min.js" crossorigin></script>
+        <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+
+        <style>
+            body {
+                margin: 0;
+                background-color: #0f172a;
+                color: #f8fafc;
+            }
+            .mermaid {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                min-height: 200px;
+                display: flex;
+                justify-content: center;
+            }
+            /* Updated to Rich Green */
+            .json-box {
+                background: #064e3b;
+                padding: 15px;
+                border-radius: 8px;
+                overflow-x: auto;
+                font-family: 'Courier New', monospace;
+                font-size: 12px;
+                color: #34d399;
+                border: 1px solid #065f46;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
+
+        <script type="text/babel">
+            const {
+                Container,
+                Typography,
+                Box,
+                TextField,
+                Button,
+                Paper,
+                Table,
+                TableBody,
+                TableCell,
+                TableContainer,
+                TableRow,
+                CircularProgress,
+                Alert,
+                Chip,
+                Stack,
+                ThemeProvider,
+                createTheme,
+                CssBaseline,
+                Card,
+                CardContent,
+                Switch,
+                FormControlLabel,
+                Collapse,
+                Divider,
+                Accordion,
+                AccordionSummary,
+                AccordionDetails,
+                Avatar,
+                Grid,
+                Link,
+            } = window.MaterialUI;
+
+            // Updated Theme: Rich Green for SSL
+            const greenTheme = createTheme({
+                palette: {
+                    mode: 'dark',
+                    primary: { main: '#10b981' },
+                    background: { default: '#0f172a', paper: '#111827' },
+                },
+                typography: { fontFamily: 'Roboto, sans-serif' },
+            });
+
+            const MermaidDiagram = ({ domain }) => {
+                const chartRef = React.useRef(null);
+                React.useEffect(() => {
+                    if (domain && chartRef.current) {
+                        mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+                        const definition = `
+                    graph TD
+                        U((User)) -->|Client Hello| S[Server]
+                        S -->|Server Hello + Cert| U
+                        U -->|Verify Chain| CA[Certificate Authority]
+                        U -->|Key Exchange| S
+                        S -->|Cipher Spec| U
+                        U -->|Encrypted Session| S
+                        style S fill:#10b981,stroke:#fff,color:#000
+                    `;
+                        chartRef.current.innerHTML = definition;
+                        mermaid.contentLoaded();
+                    }
+                }, [domain]);
+                return <div className="mermaid" ref={chartRef}></div>;
+            };
+
+            const hoverStyle = {
+                'transition': 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': { transform: 'translateY(-4px)' },
+            };
+
+            function App() {
+                const [domain, setDomain] = React.useState('');
+                const [currentLookup, setCurrentLookup] = React.useState('');
+                const [results, setResults] = React.useState(null);
+                const [loading, setLoading] = React.useState(false);
+                const [error, setError] = React.useState('');
+                const [showRaw, setShowRaw] = React.useState(false);
+
+                React.useEffect(() => {
+                    const params = new URLSearchParams(window.location.search);
+                    const q = params.get('q');
+                    if (q) {
+                        const clean = q
+                            .replace(/(^\w+:|^)\/\//, '')
+                            .split('/')[0]
+                            .toLowerCase()
+                            .trim();
+                        setDomain(clean);
+                        handleLookupAction(clean);
+                    }
+                }, []);
+
+                const handleLookupAction = async targetDomain => {
+                    if (!targetDomain) return;
+                    setLoading(true);
+                    setError('');
+                    setCurrentLookup(targetDomain);
+
+                    const newUrl = `${window.location.pathname}?q=${targetDomain}`;
+                    window.history.pushState({}, '', newUrl);
+
+                    try {
+                        // FIX: Using CertSpotter to avoid Mozilla API CORS restrictions in local browser
+                        const res = await fetch(
+                            `https://api.certspotter.com/v1/issuances?domain=${targetDomain}&expand=dns_names&expand=issuer`
+                        );
+                        if (!res.ok) throw new Error('API unreachable');
+                        const data = await res.json();
+
+                        if (!data || data.length === 0) throw new Error('No certificates found for this domain.');
+
+                        // Displaying the most recent issuance
+                        setResults(data[0]);
+                    } catch (err) {
+                        setError('CORS/Fetch Error: Direct scanning blocked. Viewing public Transparency Logs instead.');
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                return (
+                    <ThemeProvider theme={greenTheme}>
+                        <CssBaseline />
+                        <Container maxWidth="md" sx={{ py: 4 }}>
+                            {/* Header Section - Swapped & Themed Green */}
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 6, mt: 2 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                                    <Avatar
+                                        src="./logo.png"
+                                        variant="rounded"
+                                        sx={{
+                                            width: 96,
+                                            height: 96,
+                                            bgcolor: '#064e3b',
+                                            border: '2px solid #10b981',
+                                            boxShadow: '0 0 20px rgba(16, 185, 129, 0.3)',
+                                        }}
+                                    >
+                                        <span className="material-icons" style={{ fontSize: '48px' }}>
+                                            lock
+                                        </span>
+                                    </Avatar>
+                                    <Box>
+                                        <Typography variant="h4" fontWeight="900" sx={{ lineHeight: 1.1, letterSpacing: '-0.5px' }}>
+                                            Ted's Tool Box
+                                        </Typography>
+                                        <Typography
+                                            variant="subtitle2"
+                                            sx={{ color: '#10b981', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase' }}
+                                        >
+                                            SSL ANALYZER
+                                        </Typography>
+                                    </Box>
+                                </Box>
+                                <Link href="../index.html" underline="none" color="inherit" sx={hoverStyle}>
+                                    <Avatar
+                                        src="../logo.png"
+                                        variant="rounded"
+                                        sx={{ width: 96, height: 96, bgcolor: '#334155', border: '1px solid #475569' }}
+                                    >
+                                        <span className="material-icons" style={{ fontSize: '48px' }}>
+                                            handyman
+                                        </span>
+                                    </Avatar>
+                                </Link>
+                            </Box>
+
+                            <Paper
+                                sx={{
+                                    p: 1,
+                                    mb: 4,
+                                    display: 'flex',
+                                    gap: 1,
+                                    border: '1px solid #065f46',
+                                    borderRadius: '12px',
+                                    bgcolor: '#064e3b11',
+                                }}
+                            >
+                                <TextField
+                                    fullWidth
+                                    placeholder="Enter domain (e.g. google.com)..."
+                                    value={domain}
+                                    onChange={e => setDomain(e.target.value)}
+                                    onKeyPress={e => e.key === 'Enter' && handleLookupAction(domain)}
+                                    sx={{ '& fieldset': { border: 'none' } }}
+                                />
+                                <Button
+                                    variant="contained"
+                                    onClick={() => handleLookupAction(domain)}
+                                    disabled={loading}
+                                    sx={{ px: 4, borderRadius: '8px', fontWeight: 'bold' }}
+                                >
+                                    {loading ? <CircularProgress size={24} color="inherit" /> : 'Analyze'}
+                                </Button>
+                            </Paper>
+
+                            {error && (
+                                <Alert severity="warning" sx={{ mb: 4, borderRadius: '12px' }}>
+                                    {error}
+                                </Alert>
+                            )}
+
+                            {currentLookup && !loading && (
+                                <Accordion sx={{ mb: 4, bgcolor: '#111827', border: '1px solid #065f46', borderRadius: '12px !important' }}>
+                                    <AccordionSummary expandIcon={<span className="material-icons">expand_more</span>}>
+                                        <Typography variant="button" color="primary" sx={{ fontWeight: 'bold' }}>
+                                            TLS Handshake Diagram
+                                        </Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails sx={{ p: 0 }}>
+                                        <MermaidDiagram domain={currentLookup} />
+                                    </AccordionDetails>
+                                </Accordion>
+                            )}
+
+                            {results && !loading && (
+                                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+                                    <Card sx={{ gridColumn: { md: 'span 2' }, borderLeft: '6px solid #10b981', borderRadius: '12px' }}>
+                                        <CardContent>
+                                            <Typography variant="overline" color="primary" sx={{ fontWeight: 'bold' }}>
+                                                Certificate Authority
+                                            </Typography>
+                                            <Typography variant="h5" sx={{ mt: 1, fontWeight: 'bold' }}>
+                                                {results.issuer?.friendly_name || 'Unknown Issuer'}
+                                            </Typography>
+                                            <Stack direction="row" useFlexGap flexWrap="wrap" spacing={1} sx={{ mt: 2 }}>
+                                                {results.dns_names?.slice(0, 10).map(name => (
+                                                    <Chip
+                                                        key={name}
+                                                        label={name}
+                                                        size="small"
+                                                        variant="outlined"
+                                                        sx={{ fontSize: '10px' }}
+                                                    />
+                                                ))}
+                                                {results.dns_names?.length > 10 && (
+                                                    <Chip label={`+${results.dns_names.length - 10} more`} size="small" />
+                                                )}
+                                            </Stack>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card variant="outlined" sx={{ borderRadius: '12px', border: '1px solid #065f46' }}>
+                                        <Box sx={{ p: 1.5, bgcolor: '#064e3b' }}>
+                                            <Typography variant="button" fontWeight="900" color="primary">
+                                                Validity
+                                            </Typography>
+                                        </Box>
+                                        <CardContent>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Issued On
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ mb: 2 }}>
+                                                {new Date(results.not_before).toUTCString()}
+                                            </Typography>
+                                            <Typography variant="caption" color="text.secondary">
+                                                Expires On
+                                            </Typography>
+                                            <Typography variant="body2" sx={{ color: '#fbbf24', fontWeight: 'bold' }}>
+                                                {new Date(results.not_after).toUTCString()}
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card variant="outlined" sx={{ borderRadius: '12px', border: '1px solid #065f46' }}>
+                                        <Box sx={{ p: 1.5, bgcolor: '#064e3b' }}>
+                                            <Typography variant="button" fontWeight="900" color="primary">
+                                                Technical ID
+                                            </Typography>
+                                        </Box>
+                                        <CardContent>
+                                            <Typography variant="caption" color="text.secondary">
+                                                SHA-256 Fingerprint
+                                            </Typography>
+                                            <Typography
+                                                variant="body2"
+                                                sx={{ fontFamily: 'monospace', wordBreak: 'break-all', fontSize: '11px', mt: 1 }}
+                                            >
+                                                {results.sha256}
+                                            </Typography>
+                                        </CardContent>
+                                    </Card>
+                                </Box>
+                            )}
+
+                            {results && (
+                                <Box sx={{ mt: 6, mb: 4 }}>
+                                    <FormControlLabel
+                                        control={<Switch checked={showRaw} onChange={e => setShowRaw(e.target.checked)} color="primary" />}
+                                        label="View Full Log JSON"
+                                    />
+                                    <Collapse in={showRaw}>
+                                        <Box className="json-box" sx={{ mt: 2 }}>
+                                            <pre>{JSON.stringify(results, null, 2)}</pre>
+                                        </Box>
+                                    </Collapse>
+                                </Box>
+                            )}
+                        </Container>
+                    </ThemeProvider>
+                );
+            }
+            ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+        </script>
+    </body>
+</html>

@@ -1,53 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Tool Shed - DNS Inspector</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-    
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/@mui/material@5.15.0/umd/material-ui.production.min.js" crossorigin></script>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Tool Shed - DNS Inspector</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
-    <style>
-        body { margin: 0; background-color: #0f172a; color: #f8fafc; }
-        .mermaid { background: white; padding: 20px; border-radius: 8px; min-height: 200px; display: flex; justify-content: center; }
-        .json-box { background: #1e293b; padding: 15px; border-radius: 8px; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 12px; color: #38bdf8; border: 1px solid #334155; }
-    </style>
-</head>
-<body>
-    <div id="root"></div>
+        <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <script src="https://unpkg.com/@mui/material@5.15.0/umd/material-ui.production.min.js" crossorigin></script>
+        <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
 
-    <script type="text/babel">
-        const { 
-            Container, Typography, Box, TextField, Button, Paper, Table, TableBody, 
-            TableCell, TableContainer, TableRow, CircularProgress, Alert, Chip, 
-            Stack, ThemeProvider, createTheme, CssBaseline, Card, CardContent,
-            Switch, FormControlLabel, Collapse, Divider, Accordion, AccordionSummary, AccordionDetails,
-            Avatar
-        } = window.MaterialUI;
-
-        const darkTheme = createTheme({
-            palette: { 
-                mode: 'dark', 
-                primary: { main: '#38bdf8' }, 
-                background: { default: '#0f172a', paper: '#1e293b' } 
-            },
-            typography: {
-                fontFamily: 'Roboto, sans-serif',
+        <style>
+            body {
+                margin: 0;
+                background-color: #0f172a;
+                color: #f8fafc;
             }
-        });
+            .mermaid {
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                min-height: 200px;
+                display: flex;
+                justify-content: center;
+            }
+            .json-box {
+                background: #1e293b;
+                padding: 15px;
+                border-radius: 8px;
+                overflow-x: auto;
+                font-family: 'Courier New', monospace;
+                font-size: 12px;
+                color: #38bdf8;
+                border: 1px solid #334155;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="root"></div>
 
-        const MermaidDiagram = ({ domain }) => {
-            const chartRef = React.useRef(null);
-            React.useEffect(() => {
-                if (domain && chartRef.current) {
-                    mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
-                    const definition = `
+        <script type="text/babel">
+            const {
+                Container,
+                Typography,
+                Box,
+                TextField,
+                Button,
+                Paper,
+                Table,
+                TableBody,
+                TableCell,
+                TableContainer,
+                TableRow,
+                CircularProgress,
+                Alert,
+                Chip,
+                Stack,
+                ThemeProvider,
+                createTheme,
+                CssBaseline,
+                Card,
+                CardContent,
+                Switch,
+                FormControlLabel,
+                Collapse,
+                Divider,
+                Accordion,
+                AccordionSummary,
+                AccordionDetails,
+                Avatar,
+                Link,
+            } = window.MaterialUI;
+
+            const darkTheme = createTheme({
+                palette: {
+                    mode: 'dark',
+                    primary: { main: '#38bdf8' },
+                    background: { default: '#0f172a', paper: '#1e293b' },
+                },
+                typography: {
+                    fontFamily: 'Roboto, sans-serif',
+                },
+            });
+
+            const hoverStyle = {
+                'transition': 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                '&:hover': { transform: 'translateY(-4px)' },
+            };
+
+            const MermaidDiagram = ({ domain }) => {
+                const chartRef = React.useRef(null);
+                React.useEffect(() => {
+                    if (domain && chartRef.current) {
+                        mermaid.initialize({ startOnLoad: true, theme: 'neutral', securityLevel: 'loose' });
+                        const definition = `
                     graph LR
                         U((User)) --- A[DNS App]
                         A --- G[Google DNS]
@@ -56,176 +105,249 @@
                         RD --- REG[Registry]
                         style A fill:#38bdf8,stroke:#fff,color:#000
                     `;
-                    chartRef.current.innerHTML = definition;
-                    mermaid.contentLoaded();
-                }
-            }, [domain]);
-            return <div className="mermaid" ref={chartRef}></div>;
-        };
-
-        function App() {
-            const [domain, setDomain] = React.useState('');
-            const [currentLookup, setCurrentLookup] = React.useState('');
-            const [results, setResults] = React.useState({ dns: {}, whois: null, raw: null });
-            const [loading, setLoading] = React.useState(false);
-            const [error, setError] = React.useState('');
-            const [showRaw, setShowRaw] = React.useState(false);
-
-            React.useEffect(() => {
-                const params = new URLSearchParams(window.location.search);
-                const queryParam = params.get('q');
-                if (queryParam) {
-                    const sanitized = queryParam.replace(/(^\w+:|^)\/\//, '').split('/')[0].toLowerCase().trim();
-                    setDomain(sanitized);
-                    handleLookupAction(sanitized);
-                }
-            }, []);
-
-            const handleLookupAction = async (targetDomain) => {
-                if (!targetDomain) return;
-                setLoading(true);
-                setError('');
-                setCurrentLookup(targetDomain);
-                const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?q=' + targetDomain;
-                window.history.pushState({path:newUrl},'',newUrl);
-                
-                try {
-                    const dnsTypes = ['A', 'AAAA', 'MX', 'TXT', 'NS', 'CNAME'];
-                    const dnsPromises = dnsTypes.map(type => 
-                        fetch(`https://dns.google/resolve?name=${targetDomain}&type=${type}`).then(r => r.json())
-                    );
-                    const rdapFetch = fetch(`https://rdap.org/domain/${targetDomain}`)
-                        .then(async r => r.status === 404 ? { error: "No RDAP record found." } : await r.json())
-                        .catch(() => ({ error: "Connection failed." }));
-
-                    const [dnsData, whoisData] = await Promise.all([Promise.all(dnsPromises), rdapFetch]);
-                    const dnsMap = {};
-                    dnsTypes.forEach((type, i) => dnsMap[type] = dnsData[i].Answer || []);
-
-                    setResults({ 
-                        dns: dnsMap, 
-                        whois: whoisData.error ? null : whoisData, 
-                        rdapError: whoisData.error || null,
-                        raw: { dns: dnsData, rdap: whoisData } 
-                    });
-                } catch (err) { setError('Lookup failed.'); } finally { setLoading(false); }
+                        chartRef.current.innerHTML = definition;
+                        mermaid.contentLoaded();
+                    }
+                }, [domain]);
+                return <div className="mermaid" ref={chartRef}></div>;
             };
 
-            return (
-                <ThemeProvider theme={darkTheme}>
-                    <CssBaseline />
-                    <Container maxWidth="md" sx={{ py: 4 }}>                        
-                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 6, mt: 2 }}>
-                            <Avatar 
-                                src="./logo.png" 
-                                variant="rounded" 
-                                    sx={{ width: 96, height: 96, bgcolor: '#334155', border: '1px solid #475569' }}
-                            >
-                                <span className="material-icons" style={{ fontSize: '48px' }}>dns</span>
-                            </Avatar>
+            function App() {
+                const [domain, setDomain] = React.useState('');
+                const [currentLookup, setCurrentLookup] = React.useState('');
+                const [results, setResults] = React.useState({ dns: {}, whois: null, raw: null });
+                const [loading, setLoading] = React.useState(false);
+                const [error, setError] = React.useState('');
+                const [showRaw, setShowRaw] = React.useState(false);
 
-                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-                                <Box sx={{ textAlign: 'right' }}>
-                                    <Typography variant="h4" fontWeight="900" sx={{ lineHeight: 1.1, letterSpacing: '-0.5px' }}>
-                                        Ted's Tool Box
-                                    </Typography>
-                                    <Typography variant="subtitle2" sx={{ color: '#38bdf8', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase' }}>
-                                        github.com/mredbishop
-                                    </Typography>
-                                </Box>
+                React.useEffect(() => {
+                    const params = new URLSearchParams(window.location.search);
+                    const queryParam = params.get('q');
+                    if (queryParam) {
+                        const sanitized = queryParam
+                            .replace(/(^\w+:|^)\/\//, '')
+                            .split('/')[0]
+                            .toLowerCase()
+                            .trim();
+                        setDomain(sanitized);
+                        handleLookupAction(sanitized);
+                    }
+                }, []);
 
-                                <Avatar 
-                                    src="../logo.png" 
-                                    variant="rounded" 
-                                    sx={{ width: 96, height: 96, bgcolor: '#334155', border: '1px solid #475569' }}
-                                >
-                                    <span className="material-icons" style={{ fontSize: '48px' }}>handyman</span>
-                                </Avatar>
-                            </Box>
-                        </Box>
+                const handleLookupAction = async targetDomain => {
+                    if (!targetDomain) return;
+                    setLoading(true);
+                    setError('');
+                    setCurrentLookup(targetDomain);
+                    const newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?q=' + targetDomain;
+                    window.history.pushState({ path: newUrl }, '', newUrl);
 
-                        <Paper sx={{ p: 1, mb: 4, display: 'flex', gap: 1, border: '1px solid #334155', borderRadius: '12px' }}>
-                            <TextField 
-                                fullWidth 
-                                placeholder="Enter domain to inspect..." 
-                                value={domain} 
-                                onChange={e => setDomain(e.target.value)} 
-                                onKeyPress={e => e.key === 'Enter' && handleLookupAction(domain)}
-                                sx={{ "& fieldset": { border: "none" } }}
-                            />
-                            <Button variant="contained" onClick={() => handleLookupAction(domain)} disabled={loading} sx={{ px: 4, borderRadius: '8px' }}>
-                                {loading ? <CircularProgress size={24} color="inherit" /> : 'Inspect'}
-                            </Button>
-                        </Paper>
+                    try {
+                        const dnsTypes = ['A', 'AAAA', 'MX', 'TXT', 'NS', 'CNAME'];
+                        const dnsPromises = dnsTypes.map(type =>
+                            fetch(`https://dns.google/resolve?name=${targetDomain}&type=${type}`).then(r => r.json())
+                        );
+                        const rdapFetch = fetch(`https://rdap.org/domain/${targetDomain}`)
+                            .then(async r => (r.status === 404 ? { error: 'No RDAP record found.' } : await r.json()))
+                            .catch(() => ({ error: 'Connection failed.' }));
 
-                        {currentLookup && !loading && (
-                            <Accordion sx={{ mb: 4, bgcolor: '#1e293b', border: '1px solid #334155', borderRadius: '12px !important' }}>
-                                <AccordionSummary expandIcon={<span className="material-icons">expand_more</span>}>
-                                    <Typography variant="button" color="primary" sx={{ fontWeight: 'bold' }}>Visual Path Diagram</Typography>
-                                </AccordionSummary>
-                                <AccordionDetails sx={{ p: 0 }}>
-                                    <MermaidDiagram domain={currentLookup} />
-                                </AccordionDetails>
-                            </Accordion>
-                        )}
+                        const [dnsData, whoisData] = await Promise.all([Promise.all(dnsPromises), rdapFetch]);
+                        const dnsMap = {};
+                        dnsTypes.forEach((type, i) => (dnsMap[type] = dnsData[i].Answer || []));
 
-                        <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
-                            <Card sx={{ gridColumn: { md: 'span 2' }, borderLeft: '6px solid #38bdf8', borderRadius: '12px' }}>
-                                <CardContent>
-                                    <Typography variant="overline" color="primary" sx={{ fontWeight: 'bold' }}>Registry Data (RDAP)</Typography>
-                                    {results.whois ? (
-                                        <Stack spacing={2} mt={1}>
-                                            <Typography variant="body1" sx={{ fontWeight: 500 }}>
-                                                Registrar: <Box component="span" sx={{ color: '#94a3b8', ml: 1 }}>{results.whois.entities?.[0]?.vcardArray?.[1]?.[1]?.[3] || 'N/A'}</Box>
-                                            </Typography>
-                                            <Box>
-                                                <Stack direction="row" useFlexGap flexWrap="wrap" spacing={1}>
-                                                    {results.whois.status?.map(s => <Chip key={s} label={s} size="small" variant="outlined" color="primary" sx={{ borderRadius: '6px' }} />)}
-                                                </Stack>
-                                            </Box>
-                                        </Stack>
-                                    ) : (
-                                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>{results.rdapError || 'No registry data found.'}</Typography>
-                                    )}
-                                </CardContent>
-                            </Card>
+                        setResults({
+                            dns: dnsMap,
+                            whois: whoisData.error ? null : whoisData,
+                            rdapError: whoisData.error || null,
+                            raw: { dns: dnsData, rdap: whoisData },
+                        });
+                    } catch (err) {
+                        setError('Lookup failed.');
+                    } finally {
+                        setLoading(false);
+                    }
+                };
 
-                            {Object.entries(results.dns).map(([type, records]) => (
-                                <Card key={type} variant="outlined" sx={{ borderRadius: '12px', overflow: 'hidden' }}>
-                                    <Box sx={{ p: 1.5, bgcolor: '#334155', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                        <Typography variant="button" fontWeight="900" color="primary">{type}</Typography>
-                                        <Chip label={records.length} size="small" sx={{ height: 20, fontSize: '0.65rem' }} />
+                return (
+                    <ThemeProvider theme={darkTheme}>
+                        <CssBaseline />
+                        <Container maxWidth="md" sx={{ py: 4 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 6, mt: 2 }}>
+                                <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                                    <Avatar
+                                        src="./logo.png"
+                                        variant="rounded"
+                                        sx={{ width: 96, height: 96, bgcolor: '#334155', border: '1px solid #475569' }}
+                                    >
+                                        <span className="material-icons" style={{ fontSize: '48px' }}>
+                                            dns
+                                        </span>
+                                    </Avatar>
+                                    <Box sx={{ textAlign: 'right' }}>
+                                        <Typography variant="h4" fontWeight="900" sx={{ lineHeight: 1.1, letterSpacing: '-0.5px' }}>
+                                            Ted's Tool Box
+                                        </Typography>
+                                        <Typography
+                                            variant="subtitle2"
+                                            sx={{ color: '#38bdf8', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase' }}
+                                        >
+                                            github.com/mredbishop
+                                        </Typography>
                                     </Box>
-                                    <CardContent sx={{ p: 0 }}>
-                                        {records.length > 0 ? (
-                                            <TableContainer><Table size="small">
-                                                <TableBody>
-                                                    {records.map((r, i) => (
-                                                        <TableRow key={i}><TableCell sx={{ fontFamily: 'monospace', fontSize: '12px', color: '#cbd5e1', border: 'none', py: 1.5 }}>{r.data}</TableCell></TableRow>
-                                                    ))}
-                                                </TableBody>
-                                            </Table></TableContainer>
-                                        ) : <Typography variant="caption" sx={{ p: 3, display: 'block', color: '#64748b', textAlign: 'center' }}>No records found</Typography>}
+
+                                    <Link href="../index.html" underline="none" color="inherit" sx={hoverStyle}>
+                                        <Avatar
+                                            src="../logo.png"
+                                            variant="rounded"
+                                            sx={{ width: 96, height: 96, bgcolor: '#334155', border: '1px solid #475569' }}
+                                        >
+                                            <span className="material-icons" style={{ fontSize: '48px' }}>
+                                                handyman
+                                            </span>
+                                        </Avatar>
+                                    </Link>
+                                </Box>
+                            </Box>
+
+                            <Paper sx={{ p: 1, mb: 4, display: 'flex', gap: 1, border: '1px solid #334155', borderRadius: '12px' }}>
+                                <TextField
+                                    fullWidth
+                                    placeholder="Enter domain to inspect..."
+                                    value={domain}
+                                    onChange={e => setDomain(e.target.value)}
+                                    onKeyPress={e => e.key === 'Enter' && handleLookupAction(domain)}
+                                    sx={{ '& fieldset': { border: 'none' } }}
+                                />
+                                <Button
+                                    variant="contained"
+                                    onClick={() => handleLookupAction(domain)}
+                                    disabled={loading}
+                                    sx={{ px: 4, borderRadius: '8px' }}
+                                >
+                                    {loading ? <CircularProgress size={24} color="inherit" /> : 'Inspect'}
+                                </Button>
+                            </Paper>
+
+                            {currentLookup && !loading && (
+                                <Accordion sx={{ mb: 4, bgcolor: '#1e293b', border: '1px solid #334155', borderRadius: '12px !important' }}>
+                                    <AccordionSummary expandIcon={<span className="material-icons">expand_more</span>}>
+                                        <Typography variant="button" color="primary" sx={{ fontWeight: 'bold' }}>
+                                            Visual Path Diagram
+                                        </Typography>
+                                    </AccordionSummary>
+                                    <AccordionDetails sx={{ p: 0 }}>
+                                        <MermaidDiagram domain={currentLookup} />
+                                    </AccordionDetails>
+                                </Accordion>
+                            )}
+
+                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+                                <Card sx={{ gridColumn: { md: 'span 2' }, borderLeft: '6px solid #38bdf8', borderRadius: '12px' }}>
+                                    <CardContent>
+                                        <Typography variant="overline" color="primary" sx={{ fontWeight: 'bold' }}>
+                                            Registry Data (RDAP)
+                                        </Typography>
+                                        {results.whois ? (
+                                            <Stack spacing={2} mt={1}>
+                                                <Typography variant="body1" sx={{ fontWeight: 500 }}>
+                                                    Registrar:{' '}
+                                                    <Box component="span" sx={{ color: '#94a3b8', ml: 1 }}>
+                                                        {results.whois.entities?.[0]?.vcardArray?.[1]?.[1]?.[3] || 'N/A'}
+                                                    </Box>
+                                                </Typography>
+                                                <Box>
+                                                    <Stack direction="row" useFlexGap flexWrap="wrap" spacing={1}>
+                                                        {results.whois.status?.map(s => (
+                                                            <Chip
+                                                                key={s}
+                                                                label={s}
+                                                                size="small"
+                                                                variant="outlined"
+                                                                color="primary"
+                                                                sx={{ borderRadius: '6px' }}
+                                                            />
+                                                        ))}
+                                                    </Stack>
+                                                </Box>
+                                            </Stack>
+                                        ) : (
+                                            <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                                                {results.rdapError || 'No registry data found.'}
+                                            </Typography>
+                                        )}
                                     </CardContent>
                                 </Card>
-                            ))}
-                        </Box>
 
-                        {results.raw && (
-                            <Box sx={{ mt: 6, mb: 4 }}>
-                                <FormControlLabel control={<Switch checked={showRaw} onChange={e => setShowRaw(e.target.checked)} color="primary" />} label="Developer JSON View" />
-                                <Collapse in={showRaw}>
-                                    <Box className="json-box" sx={{ mt: 2 }}>
-                                        <pre>{JSON.stringify(results.raw, null, 2)}</pre>
-                                    </Box>
-                                </Collapse>
+                                {Object.entries(results.dns).map(([type, records]) => (
+                                    <Card key={type} variant="outlined" sx={{ borderRadius: '12px', overflow: 'hidden' }}>
+                                        <Box
+                                            sx={{
+                                                p: 1.5,
+                                                bgcolor: '#334155',
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center',
+                                            }}
+                                        >
+                                            <Typography variant="button" fontWeight="900" color="primary">
+                                                {type}
+                                            </Typography>
+                                            <Chip label={records.length} size="small" sx={{ height: 20, fontSize: '0.65rem' }} />
+                                        </Box>
+                                        <CardContent sx={{ p: 0 }}>
+                                            {records.length > 0 ? (
+                                                <TableContainer>
+                                                    <Table size="small">
+                                                        <TableBody>
+                                                            {records.map((r, i) => (
+                                                                <TableRow key={i}>
+                                                                    <TableCell
+                                                                        sx={{
+                                                                            fontFamily: 'monospace',
+                                                                            fontSize: '12px',
+                                                                            color: '#cbd5e1',
+                                                                            border: 'none',
+                                                                            py: 1.5,
+                                                                        }}
+                                                                    >
+                                                                        {r.data}
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                </TableContainer>
+                                            ) : (
+                                                <Typography
+                                                    variant="caption"
+                                                    sx={{ p: 3, display: 'block', color: '#64748b', textAlign: 'center' }}
+                                                >
+                                                    No records found
+                                                </Typography>
+                                            )}
+                                        </CardContent>
+                                    </Card>
+                                ))}
                             </Box>
-                        )}
-                    </Container>
-                </ThemeProvider>
-            );
-        }
-        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
-    </script>
-</body>
+
+                            {results.raw && (
+                                <Box sx={{ mt: 6, mb: 4 }}>
+                                    <FormControlLabel
+                                        control={<Switch checked={showRaw} onChange={e => setShowRaw(e.target.checked)} color="primary" />}
+                                        label="Developer JSON View"
+                                    />
+                                    <Collapse in={showRaw}>
+                                        <Box className="json-box" sx={{ mt: 2 }}>
+                                            <pre>{JSON.stringify(results.raw, null, 2)}</pre>
+                                        </Box>
+                                    </Collapse>
+                                </Box>
+                            )}
+                        </Container>
+                    </ThemeProvider>
+                );
+            }
+            ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+        </script>
+    </body>
 </html>
