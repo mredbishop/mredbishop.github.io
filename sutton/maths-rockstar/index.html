@@ -1,125 +1,448 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <title>Number Grid</title>
-        <link
-            rel="stylesheet"
-            href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-            integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
-            crossorigin="anonymous"
-        />
-        <script
-            src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-            crossorigin="anonymous"
-        ></script>
-        <script src="./fireworks.js"></script>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Maths Rockstar | Sutton STEM Stars</title>
+
+        <link rel="stylesheet" href="./css/style.css" />
+        <link rel="stylesheet" href="./css/material-icons.css" />
+
+        <script src="./libs/react.js" crossorigin></script>
+        <script src="./libs/react-dom.js" crossorigin></script>
+        <script src="./libs/babel.js"></script>
+        <script src="./libs/material-ui.js" crossorigin></script>
+        <script src="./libs/confetti.js"></script>
         <style>
+            :root {
+                --card: #111827;
+                --text: #e2e8f0;
+                --muted: #94a3b8;
+                --glow-maths: #fde047;
+            }
             body {
-                width: 100vw;
-                height: 100vh;
                 margin: 0;
-                padding: 0;
+                background-color: #0f172a;
+                color: var(--text);
+                font-family: 'Nunito', sans-serif;
+                min-height: 100vh;
+                background-image: radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 80%);
+            }
+            input[type='number']::-webkit-inner-spin-button,
+            input[type='number']::-webkit-outer-spin-button {
+                -webkit-appearance: none;
+                margin: 0;
+            }
+            input[type='number'] {
+                -moz-appearance: textfield;
             }
 
-            th,
-            td,
-            .answer {
-                text-align: center;
-                border: 1px solid #888 !important;
-            }
-
-            .answer {
+            .grid-item {
+                aspect-ratio: 1 / 1;
+                display: flex;
+                align-items: center;
+                justify-content: center;
                 width: 100%;
-                font-size: 14px;
+                position: relative;
             }
-
-            .table {
-                font-size: 18px;
-            }
-
-            .right {
-                background-color: #97eb93;
-            }
-
-            .wrong {
-                background-color: #ff816d;
-            }
-
-            .sum {
+            .cell-input {
+                width: 100%;
+                height: 100%;
+                transition: all 0.15s ease;
+                box-sizing: border-box;
+                text-align: center;
+                font-size: 1.15rem;
+                font-weight: 800;
                 color: #fff;
-                font-size: 12px;
-                font-weight: 600;
+                border-radius: 4px;
+                outline: none;
+                z-index: 1;
             }
-
-            .sum.hidden {
-                visibility: hidden;
+            .sum-overlay {
+                position: absolute;
+                top: 2px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: var(--glow-maths);
+                color: #000;
+                font-size: 0.65rem;
+                font-weight: 900;
+                padding: 1px 4px;
+                border-radius: 3px;
+                z-index: 10;
+                pointer-events: none;
+                white-space: nowrap;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
             }
-
-            .table td {
-                padding: 0.25em !important;
-            }
-
-            .right-count {
-                font-size: 32px;
-                font-weight: 600;
-            }
-
-            .timer {
-                width: 80px;
-                height: 80px;
-            }
-
-            .grid {
-                min-width: 768px;
-            }
-
-            @media (max-width: 992px) {
-                .grid {
-                    width: 100%;
-                    max-width: 100%;
+            @keyframes shake {
+                0%,
+                100% {
+                    transform: translateX(0);
+                }
+                25% {
+                    transform: translateX(-5px);
+                }
+                75% {
+                    transform: translateX(5px);
                 }
             }
-
-            @media print {
-                .buttons {
-                    display: none;
-                }
-
-                .timer,
-                .answer {
-                    visibility: hidden;
-                }
-
-                th,
-                td,
-                .answer {
-                    text-align: center;
-                    border: 1px solid #222 !important;
-                }
-
-                .sum {
-                    color: #000;
-                }
-
-                .table-bordered td,
-                .table-bordered th {
-                    border: 2px solid #888 !important;
-                }
+            .shake {
+                animation: shake 0.2s ease-in-out 0s 2;
             }
         </style>
     </head>
-
     <body>
-        <div class="buttons container mt-3 mb-3 text-center">
-            <form>
-                <button id="start-button" type="button" class="btn btn-success">Start 🏁</button>
-                <br />
-                <br />
-                <div><span class="right-count"></span></div>
-            </form>
-        </div>
-        <div class="grid container"></div>
-        <script src="./script.js"></script>
+        <div id="root"></div>
+
+        <script type="text/babel">
+            const {
+                Container,
+                Typography,
+                Box,
+                Paper,
+                ThemeProvider,
+                createTheme,
+                CssBaseline,
+                Avatar,
+                Button,
+                Chip,
+                Stack,
+                Link,
+                Dialog,
+                DialogTitle,
+                DialogContent,
+                DialogActions,
+                ToggleButton,
+                ToggleButtonGroup,
+            } = window.MaterialUI;
+
+            const suttonTheme = createTheme({
+                palette: { mode: 'dark', primary: { main: '#fde047' }, background: { default: '#0f172a', paper: '#111827' } },
+                shape: { borderRadius: 4 },
+                typography: { fontFamily: 'Nunito, sans-serif' },
+            });
+
+            const dingSound = new Audio('./ding.mp3');
+
+            const HeaderCell = ({ children, isCorner }) => (
+                <Box
+                    className="grid-item"
+                    sx={{
+                        bgcolor: isCorner ? 'transparent' : 'rgba(253, 224, 71, 0.1)',
+                        color: isCorner ? 'var(--muted)' : 'var(--glow-maths)',
+                        fontWeight: '900',
+                        fontSize: '1.2rem',
+                        borderRadius: '4px',
+                        border: isCorner ? 'none' : '1px solid rgba(253, 224, 71, 0.4)',
+                    }}
+                >
+                    {children}
+                </Box>
+            );
+
+            function App() {
+                const [rowHeaders, setRowHeaders] = React.useState([]);
+                const [colHeaders, setColHeaders] = React.useState([]);
+                const [gridValues, setGridValues] = React.useState({});
+                const [startTime, setStartTime] = React.useState(null);
+                const [elapsedTime, setElapsedTime] = React.useState(0);
+                const [isComplete, setIsComplete] = React.useState(false);
+                const [setupOpen, setSetupOpen] = React.useState(true);
+                const [focusedCell, setFocusedCell] = React.useState(null);
+                const [streak, setStreak] = React.useState(0);
+                const [maxStreak, setMaxStreak] = React.useState(0);
+                const [shake, setShake] = React.useState(false);
+
+                const availableRows = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+                const [selectedRows, setSelectedRows] = React.useState(availableRows);
+                const [preset, setPreset] = React.useState('all');
+
+                const inputRefs = React.useRef({});
+                const timerRef = React.useRef(null);
+
+                const shuffle = array => {
+                    let curr = array.length,
+                        rand;
+                    while (curr !== 0) {
+                        rand = Math.floor(Math.random() * curr);
+                        curr--;
+                        [array[curr], array[rand]] = [array[rand], array[curr]];
+                    }
+                    return array;
+                };
+
+                const startChallenge = () => {
+                    if (selectedRows.length === 0) return;
+                    const rows = shuffle([...selectedRows]);
+                    const cols = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
+                    setRowHeaders(rows);
+                    setColHeaders(cols);
+                    setGridValues({});
+                    setStreak(0);
+                    setMaxStreak(0);
+                    setIsComplete(false);
+                    setElapsedTime(0);
+                    setSetupOpen(false);
+                    setStartTime(Date.now());
+                    setTimeout(() => inputRefs.current[`0-0`]?.focus(), 200);
+                };
+
+                React.useEffect(() => {
+                    if (startTime && !isComplete) {
+                        timerRef.current = setInterval(() => {
+                            setElapsedTime(Math.floor((Date.now() - startTime) / 1000));
+                        }, 1000);
+                    }
+                    return () => clearInterval(timerRef.current);
+                }, [startTime, isComplete]);
+
+                const handleInputChange = (e, ri, ci) => {
+                    if (isComplete) return;
+                    const val = e.target.value;
+                    if (val.length > 3) return;
+
+                    const expected = rowHeaders[ri] * colHeaders[ci];
+                    const cellKey = `${ri}-${ci}`;
+                    const newValues = { ...gridValues, [cellKey]: val };
+                    setGridValues(newValues);
+
+                    if (val !== '') {
+                        const intVal = parseInt(val);
+                        if (intVal === expected) {
+                            dingSound.currentTime = 0;
+                            dingSound.play().catch(() => {}); // Play ding
+                            setStreak(prev => {
+                                const next = prev + 1;
+                                if (next > maxStreak) setMaxStreak(next);
+                                return next;
+                            });
+                            let nC = ci + 1;
+                            let nR = ri;
+                            if (nC >= colHeaders.length) {
+                                nC = 0;
+                                nR = ri + 1;
+                            }
+                            if (inputRefs.current[`${nR}-${nC}`]) inputRefs.current[`${nR}-${nC}`].focus();
+                        } else if (val.length >= expected.toString().length || intVal > expected) {
+                            setStreak(0);
+                            setShake(true);
+                            setTimeout(() => setShake(false), 300);
+                        }
+                    }
+
+                    let correctCount = 0;
+                    rowHeaders.forEach((rv, r_idx) => {
+                        colHeaders.forEach((cv, c_idx) => {
+                            const k = `${r_idx}-${c_idx}`;
+                            if (parseInt(k === cellKey ? val : gridValues[k]) === rv * cv) correctCount++;
+                        });
+                    });
+                    if (correctCount === rowHeaders.length * colHeaders.length) {
+                        setIsComplete(true);
+                        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#fde047', '#22c55e'] });
+                    }
+                };
+
+                const handleKeyDown = (e, ri, ci) => {
+                    if (e.key === 'Escape') {
+                        const cellKey = `${ri}-${ci}`;
+                        setGridValues(prev => ({ ...prev, [cellKey]: '' }));
+                    }
+                };
+
+                const formatTime = s => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+
+                return (
+                    <ThemeProvider theme={suttonTheme}>
+                        <CssBaseline />
+                        <Container maxWidth={false} sx={{ py: 4, px: { xs: 2, md: 6 } }}>
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexWrap: 'wrap',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    mb: 4,
+                                    gap: 3,
+                                }}
+                            >
+                                <Stack direction="row" spacing={3} alignItems="center">
+                                    <Box
+                                        component="img"
+                                        src="../sutton-logo-colour.svg"
+                                        alt="Sutton Logo"
+                                        sx={{ height: 64, width: 'auto' }}
+                                    />
+                                    <Box>
+                                        <Typography variant="h4" fontWeight="800">
+                                            Maths Rockstar
+                                        </Typography>
+                                        <Typography
+                                            variant="caption"
+                                            sx={{
+                                                color: 'primary.main',
+                                                fontWeight: 'bold',
+                                                letterSpacing: 1.5,
+                                                textTransform: 'uppercase',
+                                            }}
+                                        >
+                                            Sutton STEM Stars
+                                        </Typography>
+                                    </Box>
+                                </Stack>
+                                <Stack direction="row" spacing={2} alignItems="center">
+                                    <Stack direction="row" spacing={1} className={shake ? 'shake' : ''}>
+                                        <Chip
+                                            icon={<span className="material-icons">{streak > 10 ? 'whatshot' : 'bolt'}</span>}
+                                            label={`Streak: ${streak}`}
+                                            sx={{ fontWeight: '800', transition: 'all 0.3s' }}
+                                        />
+                                        <Chip
+                                            label={`Best: ${maxStreak}`}
+                                            variant="outlined"
+                                            sx={{ fontWeight: '800', color: 'var(--muted)' }}
+                                        />
+                                    </Stack>
+                                    <Chip
+                                        icon={<span className="material-icons">timer</span>}
+                                        label={formatTime(elapsedTime)}
+                                        sx={{ fontWeight: '800', fontSize: '1.1rem', height: 45 }}
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        onClick={() => setSetupOpen(true)}
+                                        sx={{ fontWeight: '800', color: '#000' }}
+                                    >
+                                        Setup
+                                    </Button>
+                                </Stack>
+                            </Box>
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    p: 1.5,
+                                    background: 'rgba(17, 24, 39, 0.9)',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    borderRadius: '8px',
+                                    overflowX: 'auto',
+                                }}
+                            >
+                                <Box sx={{ display: 'grid', gridTemplateColumns: `repeat(13, minmax(45px, 1fr))`, gap: '6px' }}>
+                                    <HeaderCell key="corner" isCorner>
+                                        <span className="material-icons">star</span>
+                                    </HeaderCell>
+                                    {colHeaders.map((val, i) => (
+                                        <HeaderCell key={`h-c-${i}`}>{val}</HeaderCell>
+                                    ))}
+                                    {rowHeaders.map((rv, ri) => (
+                                        <React.Fragment key={`row-${ri}`}>
+                                            <HeaderCell key={`h-r-${ri}`}>{rv}</HeaderCell>
+                                            {colHeaders.map((cv, ci) => {
+                                                const key = `${ri}-${ci}`;
+                                                const val = gridValues[key] || '';
+                                                const correct = val !== '' && parseInt(val) === rv * cv;
+                                                return (
+                                                    <div className="grid-item" key={key}>
+                                                        {focusedCell === key && (
+                                                            <div className="sum-overlay">
+                                                                {rv} × {cv}
+                                                            </div>
+                                                        )}
+                                                        <input
+                                                            ref={el => (inputRefs.current[key] = el)}
+                                                            type="number"
+                                                            value={val}
+                                                            onFocus={() => setFocusedCell(key)}
+                                                            onBlur={() => setFocusedCell(null)}
+                                                            onChange={e => handleInputChange(e, ri, ci)}
+                                                            onKeyDown={e => handleKeyDown(e, ri, ci)}
+                                                            disabled={isComplete}
+                                                            className="cell-input"
+                                                            style={{
+                                                                backgroundColor: correct
+                                                                    ? 'rgba(34, 197, 94, 0.25)'
+                                                                    : val !== ''
+                                                                    ? 'rgba(239, 68, 68, 0.2)'
+                                                                    : 'rgba(255,255,255,0.03)',
+                                                                border: `1px solid ${
+                                                                    correct
+                                                                        ? '#22c55e'
+                                                                        : val !== ''
+                                                                        ? '#ef4444'
+                                                                        : focusedCell === key
+                                                                        ? 'var(--glow-maths)'
+                                                                        : 'rgba(255,255,255,0.1)'
+                                                                }`,
+                                                            }}
+                                                        />
+                                                    </div>
+                                                );
+                                            })}
+                                        </React.Fragment>
+                                    ))}
+                                </Box>
+                            </Paper>
+                            <Dialog open={setupOpen} onClose={() => startTime && setSetupOpen(false)} maxWidth="sm" fullWidth>
+                                <DialogTitle sx={{ fontWeight: 800, textAlign: 'center' }}>Rockstar Setup</DialogTitle>
+                                <DialogContent>
+                                    <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+                                        <ToggleButtonGroup
+                                            value={preset}
+                                            exclusive
+                                            onChange={(e, p) => {
+                                                if (!p) return;
+                                                setPreset(p);
+                                                if (p === 'all') setSelectedRows(availableRows);
+                                                if (p === 'beginner') setSelectedRows([2, 5, 10]);
+                                            }}
+                                            color="primary"
+                                        >
+                                            <ToggleButton value="all" sx={{ fontWeight: 'bold' }}>
+                                                All (2-12)
+                                            </ToggleButton>
+                                            <ToggleButton value="beginner" sx={{ fontWeight: 'bold' }}>
+                                                Beginner
+                                            </ToggleButton>
+                                            <ToggleButton value="custom" sx={{ fontWeight: 'bold' }}>
+                                                Custom
+                                            </ToggleButton>
+                                        </ToggleButtonGroup>
+                                    </Box>
+                                    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 1.5 }}>
+                                        {availableRows.map(num => (
+                                            <Button
+                                                key={num}
+                                                variant={selectedRows.includes(num) ? 'contained' : 'outlined'}
+                                                onClick={() => {
+                                                    setPreset('custom');
+                                                    setSelectedRows(prev =>
+                                                        prev.includes(num) ? prev.filter(n => n !== num) : [...prev, num]
+                                                    );
+                                                }}
+                                                sx={{ fontWeight: 'bold' }}
+                                            >
+                                                {num}x
+                                            </Button>
+                                        ))}
+                                    </Box>
+                                </DialogContent>
+                                <DialogActions sx={{ p: 3, justifyContent: 'center' }}>
+                                    <Button
+                                        onClick={startChallenge}
+                                        variant="contained"
+                                        disabled={selectedRows.length === 0}
+                                        sx={{ fontWeight: 800, px: 6, color: '#000' }}
+                                    >
+                                        Launch Grid!
+                                    </Button>
+                                </DialogActions>
+                            </Dialog>
+                        </Container>
+                    </ThemeProvider>
+                );
+            }
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(<App />);
+        </script>
     </body>
 </html>
