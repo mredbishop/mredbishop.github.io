@@ -1,183 +1,214 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Tool Box | by mredbishop</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
-    
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script src="https://unpkg.com/@mui/material@5.15.0/umd/material-ui.production.min.js" crossorigin></script>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>The Tool Box | by mredbishop</title>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
-    <style>
-        body { margin: 0; background-color: #0f172a; color: #f8fafc; overflow-x: hidden; }
-        .bg-glow {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 80%);
-            z-index: -1;
-        }
-    </style>
-</head>
-<body>
-    <div class="bg-glow"></div>
-    <div id="root"></div>
+        <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+        <script src="https://unpkg.com/@mui/material@5.15.0/umd/material-ui.production.min.js" crossorigin></script>
 
-    <script type="text/babel">
-        const { 
-            Container, Typography, Box, Grid, Card, CardContent, 
-            CardActionArea, Avatar, ThemeProvider, createTheme, 
-            CssBaseline, Divider, Chip, Link
-        } = window.MaterialUI;
+        <style>
+            body {
+                margin: 0;
+                background-color: #0f172a;
+                color: #f8fafc;
+                overflow-x: hidden;
+            }
+            .bg-glow {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 80%);
+                z-index: -1;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="bg-glow"></div>
+        <div id="root"></div>
 
-        const theme = createTheme({
-            palette: { 
-                mode: 'dark', 
-                primary: { main: '#38bdf8' }, 
-                background: { default: '#0f172a', paper: '#1e293b' } 
-            },
-            shape: { borderRadius: 16 }
-        });
+        <script type="text/babel">
+            const {
+                Container,
+                Typography,
+                Box,
+                Grid,
+                Card,
+                CardContent,
+                CardActionArea,
+                Avatar,
+                ThemeProvider,
+                createTheme,
+                CssBaseline,
+                Divider,
+                Chip,
+                Link,
+            } = window.MaterialUI;
 
-        const ToolCard = ({ title, desc, icon, link, active = true }) => (
-            <Grid item xs={12} sm={6} md={4}>
-                <Card 
-                    sx={{ 
-                        height: '100%', 
-                        display: 'flex', 
-                        flexDirection: 'column',
-                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-                        border: '1px solid #334155',
-                        bgcolor: active ? '#1e293b' : 'rgba(30, 41, 59, 0.3)',
-                        opacity: active ? 1 : 0.7,
-                        '&:hover': active ? {
-                            transform: 'translateY(-8px)',
-                            borderColor: '#38bdf8',
-                            boxShadow: '0 20px 40px -15px rgba(56, 189, 248, 0.3)'
-                        } : {}
-                    }}
-                >
-                    <CardActionArea 
-                        href={active ? link : '#'} 
-                        disabled={!active}
-                        sx={{ flexGrow: 1, p: 3 }}
+            const theme = createTheme({
+                palette: {
+                    mode: 'dark',
+                    primary: { main: '#38bdf8' },
+                    background: { default: '#0f172a', paper: '#1e293b' },
+                },
+                shape: { borderRadius: 16 },
+            });
+
+            const ToolCard = ({ title, desc, icon, link, active = true }) => (
+                <Grid item xs={12} sm={6} md={4}>
+                    <Card
+                        sx={{
+                            'height': '100%',
+                            'display': 'flex',
+                            'flexDirection': 'column',
+                            'transition': 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                            'border': '1px solid #334155',
+                            'bgcolor': active ? '#1e293b' : 'rgba(30, 41, 59, 0.3)',
+                            'opacity': active ? 1 : 0.7,
+                            '&:hover': active
+                                ? {
+                                      transform: 'translateY(-8px)',
+                                      borderColor: '#38bdf8',
+                                      boxShadow: '0 20px 40px -15px rgba(56, 189, 248, 0.3)',
+                                  }
+                                : {},
+                        }}
                     >
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                            <Avatar 
-                                variant="rounded"
-                                sx={{ 
-                                    bgcolor: active ? 'rgba(56, 189, 248, 0.1)' : '#334155', 
-                                    color: active ? '#38bdf8' : '#94a3b8', 
-                                    mr: 2,
-                                    border: active ? '1px solid #38bdf8' : 'none'
-                                }}
-                            >
-                                <span className="material-icons">{icon}</span>
-                            </Avatar>
-                            <Typography variant="h6" fontWeight="bold">
-                                {title}
-                            </Typography>
-                        </Box>
-                        <Typography variant="body2" color="text.secondary" sx={{ minHeight: '40px' }}>
-                            {desc}
-                        </Typography>
-                        {!active && (
-                            <Chip 
-                                label="In Development" 
-                                size="small" 
-                                variant="outlined"
-                                sx={{ mt: 2, fontSize: '10px', fontWeight: 'bold', borderColor: '#334155', color: '#64748b' }} 
-                            />
-                        )}
-                    </CardActionArea>
-                </Card>
-            </Grid>
-        );
-
-        function App() {
-            return (
-                <ThemeProvider theme={theme}>
-                    <CssBaseline />
-                    <Container maxWidth="lg" sx={{ py: 8 }}>
-                        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', mb: 8 }}>
-                            <Avatar 
-                                src="./logo.png" 
-                                variant="rounded"
-                                sx={{ 
-                                    width: 140, 
-                                    height: 140, 
-                                    mb: 4, 
-                                    bgcolor: '#1e293b',
-                                    border: '2px solid #334155',
-                                    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)'
-                                }}
-                            >
-                                <span className="material-icons" style={{ fontSize: '70px' }}>inventory_2</span>
-                            </Avatar>
-                            
-                            <Typography variant="h2" fontWeight="900" gutterBottom sx={{ letterSpacing: '-1.5px' }}>
-                                Ted's Tool Box
-                            </Typography>
-                            <Link href="https://github.com/mredbishop" target="_blank" rel="noopener noreferrer">
-                                <Typography variant="h6" color="primary" sx={{ fontWeight: '900', letterSpacing: '4px', mb: 2 }}>
-                                    github.com/mredbishop
+                        <CardActionArea href={active ? link : '#'} disabled={!active} sx={{ flexGrow: 1, p: 3 }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                                <Avatar
+                                    variant="rounded"
+                                    sx={{
+                                        bgcolor: active ? 'rgba(56, 189, 248, 0.1)' : '#334155',
+                                        color: active ? '#38bdf8' : '#94a3b8',
+                                        mr: 2,
+                                        border: active ? '1px solid #38bdf8' : 'none',
+                                    }}
+                                >
+                                    <span className="material-icons">{icon}</span>
+                                </Avatar>
+                                <Typography variant="h6" fontWeight="bold">
+                                    {title}
                                 </Typography>
-                            </Link>
-                            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: '600px', fontSize: '1.15rem', lineHeight: 1.6 }}>
-                                A streamlined environment for technical diagnostics, network inspection, and developer productivity.
+                            </Box>
+                            <Typography variant="body2" color="text.secondary" sx={{ minHeight: '40px' }}>
+                                {desc}
                             </Typography>
-                        </Box>
-
-                        <Divider sx={{ mb: 6, borderColor: '#334155' }} />
-
-                        <Box sx={{ mb: 4 }}>
-                            <Typography variant="overline" sx={{ fontWeight: '900', color: 'primary.main', fontSize: '0.85rem', letterSpacing: '1px' }}>
-                                Active Modules
-                            </Typography>
-                        </Box>
-                        
-                        <Grid container spacing={3}>
-                            <ToolCard 
-                                title="DNS Inspector"
-                                desc="Analyze domain records and registration data with high-speed DNS-over-HTTPS lookups."
-                                icon="dns"
-                                link="./dns-tools/index.html"
-                                active={true}
-                            />
-
-                            <ToolCard 
-                                title="Config Explorer"
-                                desc="Parse and transform YAML, JSON, and XML configurations with immediate validation."
-                                icon="settings_input_component"
-                                link="#"
-                                active={false}
-                            />
-
-                            <ToolCard 
-                                title="Encrypted Notes"
-                                desc="Quickly store snippets with local browser encryption for temporary technical logs."
-                                icon="enhanced_encryption"
-                                link="#"
-                                active={false}
-                            />
-                        </Grid>
-
-                        <Box sx={{ mt: 15, textAlign: 'center', borderTop: '1px solid #1e293b', pt: 4 }}>
-                            <Typography variant="caption" sx={{ color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}>
-                                <span className="material-icons" style={{ fontSize: '14px' }}>terminal</span>
-                                &copy; 2025 The Tool Box &bull; mredbishop
-                            </Typography>
-                        </Box>
-
-                    </Container>
-                </ThemeProvider>
+                            {!active && (
+                                <Chip
+                                    label="In Development"
+                                    size="small"
+                                    variant="outlined"
+                                    sx={{ mt: 2, fontSize: '10px', fontWeight: 'bold', borderColor: '#334155', color: '#64748b' }}
+                                />
+                            )}
+                        </CardActionArea>
+                    </Card>
+                </Grid>
             );
-        }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
+            function App() {
+                return (
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline />
+                        <Container maxWidth="lg" sx={{ py: 8 }}>
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', mb: 8 }}>
+                                <Avatar
+                                    src="./logo.png"
+                                    variant="rounded"
+                                    sx={{
+                                        width: 140,
+                                        height: 140,
+                                        mb: 4,
+                                        bgcolor: '#1e293b',
+                                        border: '2px solid #334155',
+                                        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)',
+                                    }}
+                                >
+                                    <span className="material-icons" style={{ fontSize: '70px' }}>
+                                        inventory_2
+                                    </span>
+                                </Avatar>
+
+                                <Typography variant="h2" fontWeight="900" gutterBottom sx={{ letterSpacing: '-1.5px' }}>
+                                    Ted's Tool Box
+                                </Typography>
+                                <Link href="https://github.com/mredbishop" target="_blank" rel="noopener noreferrer">
+                                    <Typography variant="h6" color="primary" sx={{ fontWeight: '900', letterSpacing: '4px', mb: 2 }}>
+                                        github.com/mredbishop
+                                    </Typography>
+                                </Link>
+                                <Typography
+                                    variant="body1"
+                                    color="text.secondary"
+                                    sx={{ maxWidth: '600px', fontSize: '1.15rem', lineHeight: 1.6 }}
+                                >
+                                    A streamlined environment for technical diagnostics, network inspection, and developer productivity.
+                                </Typography>
+                            </Box>
+
+                            <Divider sx={{ mb: 6, borderColor: '#334155' }} />
+
+                            <Box sx={{ mb: 4 }}>
+                                <Typography
+                                    variant="overline"
+                                    sx={{ fontWeight: '900', color: 'primary.main', fontSize: '0.85rem', letterSpacing: '1px' }}
+                                >
+                                    Active Modules
+                                </Typography>
+                            </Box>
+
+                            <Grid container spacing={3}>
+                                <ToolCard
+                                    title="DNS Inspector"
+                                    desc="Analyze domain records and registration data with high-speed DNS-over-HTTPS lookups."
+                                    icon="dns"
+                                    link="./dns-tools/index.html"
+                                    active={true}
+                                />
+
+                                <ToolCard
+                                    title="HTTP Header Lab"
+                                    desc="Analyze and debug HTTP response headers and security policies."
+                                    icon="security"
+                                    link="#"
+                                    active={false}
+                                />
+
+                                <ToolCard
+                                    title="SSL Certificate Tool"
+                                    desc="Inspect expiry, chain of trust, and cipher suites for any domain."
+                                    icon="verified_user"
+                                    link="#"
+                                    active={false}
+                                />
+                            </Grid>
+
+                            <Box sx={{ mt: 15, textAlign: 'center', borderTop: '1px solid #1e293b', pt: 4 }}>
+                                <Typography
+                                    variant="caption"
+                                    sx={{ color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}
+                                >
+                                    <span className="material-icons" style={{ fontSize: '14px' }}>
+                                        terminal
+                                    </span>
+                                    &copy; 2025 The Tool Box &bull; mredbishop
+                                </Typography>
+                            </Box>
+                        </Container>
+                    </ThemeProvider>
+                );
+            }
+
+            const root = ReactDOM.createRoot(document.getElementById('root'));
+            root.render(<App />);
+        </script>
+    </body>
 </html>
