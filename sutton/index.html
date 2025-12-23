@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sutton Primary AcademySTEM Stars</title>
+  <style>
+    :root {
+      --card: #111827;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --glow-1: linear-gradient(135deg, #22c55e, #0ea5e9);
+      --glow-2: linear-gradient(135deg, #a855f7, #f97316);
+    }
+    * { box-sizing: border-box; }
+    body {
+        min-height: 100vh;
+        background-image: url('school.jpg');
+        background-size: cover;
+        background-position: center;
+        padding: 0;
+        margin: 0;
+    }
+    .body-bg {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "Nunito", system-ui, -apple-system, "Comic Sans MS", sans-serif;
+        color: var(--text);
+        width: 100%;
+        min-height: 100vh;
+        background: rgba(0,0,0,0.8);
+    }
+    .shell {
+      width: min(1080px, 100%);
+      background: var(--card);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .logo {
+      height: 80px;
+      margin-bottom: 12px;
+    }
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+    p.subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 18px;
+      margin-top: 16px;
+    }
+    .btn-card {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      padding: 20px;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      min-height: 170px;
+    }
+    .btn-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(56,189,248,0.4);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.55);
+    }
+    .btn-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: var(--glow-1);
+      opacity: 0.25;
+      filter: blur(50px);
+      transform: scale(1.2);
+      z-index: 0;
+    }
+    .btn-card.alt::before { background: var(--glow-2); }
+    .card-body {
+      position: relative;
+      z-index: 1;
+    }
+    .label {
+      font-size: 1.4rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .desc {
+      color: var(--muted);
+      font-weight: 600;
+    }
+    @media (max-width: 640px) {
+      body { padding: 16px; }
+      .shell { padding: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="body-bg">
+    <div class="shell">
+        <header>
+        <img src="sutton-logo-colour.svg" class="logo" alt="Sutton STEM Stars logo">
+        <h1>Sutton Primary Academy STEM Stars</h1>
+        <p class="subtitle">Pick an adventure: racing or soundboard fun.</p>
+        </header>
+
+        <section class="grid">
+        <a class="btn-card" href="/sutton-racer/sutton-racer.html">
+            <div class="card-body">
+            <div class="label">Sutton Racer</div>
+            <div class="desc">Start your engines and race!</div>
+            </div>
+        </a>
+        <a class="btn-card alt" href="/sutton-sounds/sutton-sounds.html">
+            <div class="card-body">
+            <div class="label">Sutton Sounds</div>
+            <div class="desc">Jump into the sound board.</div>
+            </div>
+        </a>
+        </section>
+    </div>
+  </div>
+</body>
+</html>
