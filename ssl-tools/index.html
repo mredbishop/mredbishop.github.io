@@ -3,7 +3,65 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>The Tool Box - SSL Analyzer</title>
+
+        <title>SSL Certificate Analyzer | Ted's Tool Box by mredbishop</title>
+        <meta
+            name="description"
+            content="Professional-grade SSL/TLS certificate analyzer for Ted's Tool Box. Check expiry dates, Certificate Authorities, and SHA-256 fingerprints."
+        />
+        <meta
+            name="keywords"
+            content="SSL Checker, TLS Analyzer, Certificate Expiry, mredbishop, Ted's Tool Box, HTTPS Security, mredbishop.github.io"
+        />
+        <meta name="author" content="mredbishop" />
+
+        <link rel="canonical" href="https://mredbishop.github.io/ssl-tools/index.html" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://mredbishop.github.io/ssl-tools/index.html" />
+        <meta property="og:title" content="SSL Certificate Analyzer | Ted's Tool Box" />
+        <meta property="og:description" content="Inspect SSL/TLS certificates and security implementation instantly." />
+        <meta property="og:image" content="https://mredbishop.github.io/ssl-tools/logo.png" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content="SSL Certificate Analyzer | Ted's Tool Box" />
+        <meta property="twitter:image" content="https://mredbishop.github.io/ssl-tools/logo.png" />
+
+        <script type="application/ld+json">
+            [
+                {
+                    "@context": "https://schema.org",
+                    "@type": "SoftwareApplication",
+                    "name": "SSL Certificate Analyzer",
+                    "operatingSystem": "Web",
+                    "applicationCategory": "DeveloperApplication",
+                    "url": "https://mredbishop.github.io/ssl-tools/index.html",
+                    "author": {
+                        "@type": "Person",
+                        "name": "mredbishop"
+                    }
+                },
+                {
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "The Tool Box",
+                            "item": "https://mredbishop.github.io/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "SSL Analyzer",
+                            "item": "https://mredbishop.github.io/ssl-tools/index.html"
+                        }
+                    ]
+                }
+            ]
+        </script>
+
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
@@ -27,7 +85,6 @@
                 display: flex;
                 justify-content: center;
             }
-            /* Updated to Rich Green */
             .json-box {
                 background: #064e3b;
                 padding: 15px;
@@ -37,6 +94,16 @@
                 font-size: 12px;
                 color: #34d399;
                 border: 1px solid #065f46;
+            }
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                border: 0;
             }
         </style>
     </head>
@@ -77,7 +144,6 @@
                 Link,
             } = window.MaterialUI;
 
-            // Updated Theme: Rich Green for SSL
             const greenTheme = createTheme({
                 palette: {
                     mode: 'dark',
@@ -146,19 +212,15 @@
                     window.history.pushState({}, '', newUrl);
 
                     try {
-                        // FIX: Using CertSpotter to avoid Mozilla API CORS restrictions in local browser
                         const res = await fetch(
                             `https://api.certspotter.com/v1/issuances?domain=${targetDomain}&expand=dns_names&expand=issuer`
                         );
                         if (!res.ok) throw new Error('API unreachable');
                         const data = await res.json();
-
-                        if (!data || data.length === 0) throw new Error('No certificates found for this domain.');
-
-                        // Displaying the most recent issuance
+                        if (!data || data.length === 0) throw new Error('No certificates found.');
                         setResults(data[0]);
                     } catch (err) {
-                        setError('CORS/Fetch Error: Direct scanning blocked. Viewing public Transparency Logs instead.');
+                        setError('Lookup Error: Data fetched from Certificate Transparency Logs.');
                     } finally {
                         setLoading(false);
                     }
@@ -167,27 +229,31 @@
                 return (
                     <ThemeProvider theme={greenTheme}>
                         <CssBaseline />
-                        <Container maxWidth="md" sx={{ py: 4 }}>
-                            {/* Header Section - Swapped & Themed Green */}
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 6, mt: 2 }}>
+                        <h1 className="sr-only">SSL Certificate Analyzer Tool - Ted's Tool Box</h1>
+
+                        <Container component="main" maxWidth="md" sx={{ py: 4 }}>
+                            <Box
+                                component="header"
+                                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 6, mt: 2 }}
+                            >
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                                     <Avatar
                                         src="./logo.png"
+                                        alt="SSL Analyzer Logo"
                                         variant="rounded"
-                                        sx={{
-                                            width: 96,
-                                            height: 96,
-                                            bgcolor: '#064e3b',
-                                            border: '2px solid #10b981',
-                                            boxShadow: '0 0 20px rgba(16, 185, 129, 0.3)',
-                                        }}
+                                        sx={{ width: 96, height: 96, bgcolor: '#064e3b', border: '2px solid #10b981' }}
                                     >
                                         <span className="material-icons" style={{ fontSize: '48px' }}>
                                             lock
                                         </span>
                                     </Avatar>
                                     <Box>
-                                        <Typography variant="h4" fontWeight="900" sx={{ lineHeight: 1.1, letterSpacing: '-0.5px' }}>
+                                        <Typography
+                                            variant="h4"
+                                            component="h2"
+                                            fontWeight="900"
+                                            sx={{ lineHeight: 1.1, letterSpacing: '-0.5px' }}
+                                        >
                                             Ted's Tool Box
                                         </Typography>
                                         <Typography
@@ -198,9 +264,10 @@
                                         </Typography>
                                     </Box>
                                 </Box>
-                                <Link href="../index.html" underline="none" color="inherit" sx={hoverStyle}>
+                                <Link href="../index.html" aria-label="Home" underline="none" color="inherit" sx={hoverStyle}>
                                     <Avatar
                                         src="../logo.png"
+                                        alt="Tool Box Home"
                                         variant="rounded"
                                         sx={{ width: 96, height: 96, bgcolor: '#334155', border: '1px solid #475569' }}
                                     >
@@ -212,6 +279,7 @@
                             </Box>
 
                             <Paper
+                                component="section"
                                 sx={{
                                     p: 1,
                                     mb: 4,
@@ -250,7 +318,7 @@
                                 <Accordion sx={{ mb: 4, bgcolor: '#111827', border: '1px solid #065f46', borderRadius: '12px !important' }}>
                                     <AccordionSummary expandIcon={<span className="material-icons">expand_more</span>}>
                                         <Typography variant="button" color="primary" sx={{ fontWeight: 'bold' }}>
-                                            TLS Handshake Diagram
+                                            TLS Handshake Visualization
                                         </Typography>
                                     </AccordionSummary>
                                     <AccordionDetails sx={{ p: 0 }}>
@@ -260,28 +328,22 @@
                             )}
 
                             {results && !loading && (
-                                <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+                                <Box
+                                    component="section"
+                                    sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}
+                                >
                                     <Card sx={{ gridColumn: { md: 'span 2' }, borderLeft: '6px solid #10b981', borderRadius: '12px' }}>
                                         <CardContent>
                                             <Typography variant="overline" color="primary" sx={{ fontWeight: 'bold' }}>
-                                                Certificate Authority
+                                                Issuer (CA)
                                             </Typography>
-                                            <Typography variant="h5" sx={{ mt: 1, fontWeight: 'bold' }}>
-                                                {results.issuer?.friendly_name || 'Unknown Issuer'}
+                                            <Typography variant="h5" component="h3" sx={{ mt: 1, fontWeight: 'bold' }}>
+                                                {results.issuer?.friendly_name || 'Unknown'}
                                             </Typography>
                                             <Stack direction="row" useFlexGap flexWrap="wrap" spacing={1} sx={{ mt: 2 }}>
                                                 {results.dns_names?.slice(0, 10).map(name => (
-                                                    <Chip
-                                                        key={name}
-                                                        label={name}
-                                                        size="small"
-                                                        variant="outlined"
-                                                        sx={{ fontSize: '10px' }}
-                                                    />
+                                                    <Chip key={name} label={name} size="small" variant="outlined" />
                                                 ))}
-                                                {results.dns_names?.length > 10 && (
-                                                    <Chip label={`+${results.dns_names.length - 10} more`} size="small" />
-                                                )}
                                             </Stack>
                                         </CardContent>
                                     </Card>
@@ -289,18 +351,12 @@
                                     <Card variant="outlined" sx={{ borderRadius: '12px', border: '1px solid #065f46' }}>
                                         <Box sx={{ p: 1.5, bgcolor: '#064e3b' }}>
                                             <Typography variant="button" fontWeight="900" color="primary">
-                                                Validity
+                                                Validity Period
                                             </Typography>
                                         </Box>
                                         <CardContent>
                                             <Typography variant="caption" color="text.secondary">
-                                                Issued On
-                                            </Typography>
-                                            <Typography variant="body2" sx={{ mb: 2 }}>
-                                                {new Date(results.not_before).toUTCString()}
-                                            </Typography>
-                                            <Typography variant="caption" color="text.secondary">
-                                                Expires On
+                                                Expiry Date
                                             </Typography>
                                             <Typography variant="body2" sx={{ color: '#fbbf24', fontWeight: 'bold' }}>
                                                 {new Date(results.not_after).toUTCString()}
@@ -311,17 +367,14 @@
                                     <Card variant="outlined" sx={{ borderRadius: '12px', border: '1px solid #065f46' }}>
                                         <Box sx={{ p: 1.5, bgcolor: '#064e3b' }}>
                                             <Typography variant="button" fontWeight="900" color="primary">
-                                                Technical ID
+                                                Fingerprint
                                             </Typography>
                                         </Box>
                                         <CardContent>
                                             <Typography variant="caption" color="text.secondary">
-                                                SHA-256 Fingerprint
+                                                SHA-256
                                             </Typography>
-                                            <Typography
-                                                variant="body2"
-                                                sx={{ fontFamily: 'monospace', wordBreak: 'break-all', fontSize: '11px', mt: 1 }}
-                                            >
+                                            <Typography variant="body2" sx={{ fontFamily: 'monospace', fontSize: '11px', mt: 1 }}>
                                                 {results.sha256}
                                             </Typography>
                                         </CardContent>
@@ -329,19 +382,11 @@
                                 </Box>
                             )}
 
-                            {results && (
-                                <Box sx={{ mt: 6, mb: 4 }}>
-                                    <FormControlLabel
-                                        control={<Switch checked={showRaw} onChange={e => setShowRaw(e.target.checked)} color="primary" />}
-                                        label="View Full Log JSON"
-                                    />
-                                    <Collapse in={showRaw}>
-                                        <Box className="json-box" sx={{ mt: 2 }}>
-                                            <pre>{JSON.stringify(results, null, 2)}</pre>
-                                        </Box>
-                                    </Collapse>
-                                </Box>
-                            )}
+                            <Box component="footer" sx={{ mt: 10, textAlign: 'center', opacity: 0.5 }}>
+                                <Typography variant="caption" display="block">
+                                    Hosted on GitHub Pages &bull; mredbishop
+                                </Typography>
+                            </Box>
                         </Container>
                     </ThemeProvider>
                 );

@@ -3,7 +3,50 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>The Tool Box | by mredbishop</title>
+
+        <title>Ted's Tool Box | Professional Developer & Network Utilities</title>
+        <meta
+            name="description"
+            content="A curated collection of professional developer utilities, including DNS inspection and SSL certificate analysis, handcrafted by mredbishop."
+        />
+        <meta name="keywords" content="mredbishop, Ted's Tool Box, DNS Inspector, SSL Analyzer, Developer Tools, Network Diagnostics" />
+        <meta name="author" content="mredbishop" />
+        <link rel="canonical" href="https://mredbishop.github.io/index.html" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://mredbishop.github.io/index.html" />
+        <meta property="og:title" content="Ted's Tool Box | by mredbishop" />
+        <meta property="og:description" content="Technical diagnostics and network inspection tools for developers." />
+        <meta property="og:image" content="https://mredbishop.github.io/logo.png" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content="Ted's Tool Box | by mredbishop" />
+        <meta property="twitter:image" content="https://mredbishop.github.io/logo.png" />
+
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "ItemList",
+                "name": "Ted's Tool Box",
+                "description": "Collection of web-based technical utilities",
+                "url": "https://mredbishop.github.io/index.html",
+                "itemListElement": [
+                    {
+                        "@type": "ListItem",
+                        "position": 1,
+                        "name": "DNS Inspector",
+                        "url": "https://mredbishop.github.io/dns-tools/index.html"
+                    },
+                    {
+                        "@type": "ListItem",
+                        "position": 2,
+                        "name": "SSL Certificate Tool",
+                        "url": "https://mredbishop.github.io/ssl-tools/index.html"
+                    }
+                ]
+            }
+        </script>
+
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
@@ -27,6 +70,16 @@
                 height: 100vh;
                 background: radial-gradient(circle at 50% -20%, #1e293b 0%, #0f172a 80%);
                 z-index: -1;
+            }
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                border: 0;
             }
         </style>
     </head>
@@ -61,7 +114,8 @@
                 shape: { borderRadius: 16 },
             });
 
-            const ToolCard = ({ title, desc, icon, link, active = true }) => (
+            // Added accentColor prop for specific tool branding
+            const ToolCard = ({ title, desc, icon, link, active = true, accentColor = '#38bdf8' }) => (
                 <Grid item xs={12} sm={6} md={4}>
                     <Card
                         sx={{
@@ -75,8 +129,8 @@
                             '&:hover': active
                                 ? {
                                       transform: 'translateY(-8px)',
-                                      borderColor: '#38bdf8',
-                                      boxShadow: '0 20px 40px -15px rgba(56, 189, 248, 0.3)',
+                                      borderColor: accentColor,
+                                      boxShadow: `0 20px 40px -15px ${accentColor}44`,
                                   }
                                 : {},
                         }}
@@ -86,10 +140,10 @@
                                 <Avatar
                                     variant="rounded"
                                     sx={{
-                                        bgcolor: active ? 'rgba(56, 189, 248, 0.1)' : '#334155',
-                                        color: active ? '#38bdf8' : '#94a3b8',
+                                        bgcolor: active ? `${accentColor}11` : '#334155',
+                                        color: active ? accentColor : '#94a3b8',
                                         mr: 2,
-                                        border: active ? '1px solid #38bdf8' : 'none',
+                                        border: active ? `1px solid ${accentColor}` : 'none',
                                     }}
                                 >
                                     <span className="material-icons">{icon}</span>
@@ -103,7 +157,7 @@
                             </Typography>
                             {!active && (
                                 <Chip
-                                    label="In Development"
+                                    label="Coming Soon"
                                     size="small"
                                     variant="outlined"
                                     sx={{ mt: 2, fontSize: '10px', fontWeight: 'bold', borderColor: '#334155', color: '#64748b' }}
@@ -118,10 +172,16 @@
                 return (
                     <ThemeProvider theme={theme}>
                         <CssBaseline />
-                        <Container maxWidth="lg" sx={{ py: 8 }}>
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', mb: 8 }}>
+                        <h1 className="sr-only">Ted's Tool Box by mredbishop</h1>
+
+                        <Container component="main" maxWidth="lg" sx={{ py: 8 }}>
+                            <Box
+                                component="header"
+                                sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', mb: 8 }}
+                            >
                                 <Avatar
                                     src="./logo.png"
+                                    alt="The Tool Box Logo"
                                     variant="rounded"
                                     sx={{
                                         width: 140,
@@ -137,11 +197,21 @@
                                     </span>
                                 </Avatar>
 
-                                <Typography variant="h2" fontWeight="900" gutterBottom sx={{ letterSpacing: '-1.5px' }}>
+                                <Typography variant="h2" component="h2" fontWeight="900" gutterBottom sx={{ letterSpacing: '-1.5px' }}>
                                     Ted's Tool Box
                                 </Typography>
-                                <Link href="https://github.com/mredbishop" target="_blank" rel="noopener noreferrer">
-                                    <Typography variant="h6" color="primary" sx={{ fontWeight: '900', letterSpacing: '4px', mb: 2 }}>
+                                <Link href="https://github.com/mredbishop" target="_blank" rel="noopener noreferrer" underline="none">
+                                    <Typography
+                                        variant="h6"
+                                        color="primary"
+                                        sx={{
+                                            'fontWeight': '900',
+                                            'letterSpacing': '4px',
+                                            'mb': 2,
+                                            'transition': '0.2s',
+                                            '&:hover': { opacity: 0.8 },
+                                        }}
+                                    >
                                         github.com/mredbishop
                                     </Typography>
                                 </Link>
@@ -156,7 +226,7 @@
 
                             <Divider sx={{ mb: 6, borderColor: '#334155' }} />
 
-                            <Box sx={{ mb: 4 }}>
+                            <Box component="section" sx={{ mb: 4 }}>
                                 <Typography
                                     variant="overline"
                                     sx={{ fontWeight: '900', color: 'primary.main', fontSize: '0.85rem', letterSpacing: '1px' }}
@@ -172,14 +242,16 @@
                                     icon="dns"
                                     link="./dns-tools/index.html"
                                     active={true}
+                                    accentColor="#0752ef" // Brand Blue
                                 />
 
                                 <ToolCard
                                     title="SSL Certificate Tool"
-                                    desc="Inspect expiry, chain of trust, and cipher suites for any domain."
+                                    desc="Inspect expiry, chain of trust, and certificate transparency for any domain."
                                     icon="verified_user"
                                     link="./ssl-tools/index.html"
                                     active={true}
+                                    accentColor="#10b981" // Rich Green
                                 />
 
                                 <ToolCard
@@ -191,7 +263,7 @@
                                 />
                             </Grid>
 
-                            <Box sx={{ mt: 15, textAlign: 'center', borderTop: '1px solid #1e293b', pt: 4 }}>
+                            <Box component="footer" sx={{ mt: 15, textAlign: 'center', borderTop: '1px solid #1e293b', pt: 4 }}>
                                 <Typography
                                     variant="caption"
                                     sx={{ color: '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 1 }}
@@ -199,7 +271,7 @@
                                     <span className="material-icons" style={{ fontSize: '14px' }}>
                                         terminal
                                     </span>
-                                    &copy; 2025 The Tool Box &bull; mredbishop
+                                    &copy; 2025 Ted's Tool Box &bull; mredbishop
                                 </Typography>
                             </Box>
                         </Container>

@@ -3,7 +3,65 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>The Tool Shed - DNS Inspector</title>
+
+        <title>DNS Record Inspector | Ted's Tool Box by mredbishop</title>
+        <meta
+            name="description"
+            content="A comprehensive DNS lookup tool. Inspect A, MX, TXT, and CNAME records with visual request pathing and RDAP registry data."
+        />
+        <meta
+            name="keywords"
+            content="DNS Checker, DNS Lookup, MX Record, TXT record, mredbishop, Ted's Tool Box, Networking Tools, DNS propagation"
+        />
+        <meta name="author" content="mredbishop" />
+
+        <link rel="canonical" href="https://mredbishop.github.io/dns-tools/index.html" />
+
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://mredbishop.github.io/dns-tools/index.html" />
+        <meta property="og:title" content="DNS Record Inspector | Ted's Tool Box" />
+        <meta property="og:description" content="Analyze domain DNS records and registry registration data instantly." />
+        <meta property="og:image" content="https://mredbishop.github.io/dns-tools/logo.png" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:title" content="DNS Record Inspector | Ted's Tool Box" />
+        <meta property="twitter:image" content="https://mredbishop.github.io/dns-tools/logo.png" />
+
+        <script type="application/ld+json">
+            [
+                {
+                    "@context": "https://schema.org",
+                    "@type": "SoftwareApplication",
+                    "name": "DNS Record Inspector",
+                    "operatingSystem": "Web",
+                    "applicationCategory": "DeveloperApplication",
+                    "url": "https://mredbishop.github.io/dns-tools/index.html",
+                    "author": {
+                        "@type": "Person",
+                        "name": "mredbishop"
+                    }
+                },
+                {
+                    "@context": "https://schema.org",
+                    "@type": "BreadcrumbList",
+                    "itemListElement": [
+                        {
+                            "@type": "ListItem",
+                            "position": 1,
+                            "name": "The Tool Box",
+                            "item": "https://mredbishop.github.io/"
+                        },
+                        {
+                            "@type": "ListItem",
+                            "position": 2,
+                            "name": "DNS Inspector",
+                            "item": "https://mredbishop.github.io/dns-tools/index.html"
+                        }
+                    ]
+                }
+            ]
+        </script>
+
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
 
@@ -27,15 +85,26 @@
                 display: flex;
                 justify-content: center;
             }
+            /* Tinted to DNS Blue */
             .json-box {
-                background: #1e293b;
+                background: #0c1a3a;
                 padding: 15px;
                 border-radius: 8px;
                 overflow-x: auto;
                 font-family: 'Courier New', monospace;
                 font-size: 12px;
                 color: #38bdf8;
-                border: 1px solid #334155;
+                border: 1px solid #0752ef;
+            }
+            .sr-only {
+                position: absolute;
+                width: 1px;
+                height: 1px;
+                padding: 0;
+                margin: -1px;
+                overflow: hidden;
+                clip: rect(0, 0, 0, 0);
+                border: 0;
             }
         </style>
     </head>
@@ -75,15 +144,14 @@
                 Link,
             } = window.MaterialUI;
 
-            const darkTheme = createTheme({
+            // Updated Theme with Logo Color 0752ef
+            const dnsTheme = createTheme({
                 palette: {
                     mode: 'dark',
-                    primary: { main: '#38bdf8' },
+                    primary: { main: '#0752ef' },
                     background: { default: '#0f172a', paper: '#1e293b' },
                 },
-                typography: {
-                    fontFamily: 'Roboto, sans-serif',
-                },
+                typography: { fontFamily: 'Roboto, sans-serif' },
             });
 
             const hoverStyle = {
@@ -103,7 +171,7 @@
                         G --- R[Root/TLD]
                         A --- RD[RDAP.org]
                         RD --- REG[Registry]
-                        style A fill:#38bdf8,stroke:#fff,color:#000
+                        style A fill:#0752ef,stroke:#fff,color:#fff
                     `;
                         chartRef.current.innerHTML = definition;
                         mermaid.contentLoaded();
@@ -139,7 +207,7 @@
                     setLoading(true);
                     setError('');
                     setCurrentLookup(targetDomain);
-                    const newUrl = window.location.protocol + '//' + window.location.host + window.location.pathname + '?q=' + targetDomain;
+                    const newUrl = `${window.location.pathname}?q=${targetDomain}`;
                     window.history.pushState({ path: newUrl }, '', newUrl);
 
                     try {
@@ -169,49 +237,79 @@
                 };
 
                 return (
-                    <ThemeProvider theme={darkTheme}>
+                    <ThemeProvider theme={dnsTheme}>
                         <CssBaseline />
-                        <Container maxWidth="md" sx={{ py: 4 }}>
-                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 6, mt: 2 }}>
+                        <h1 className="sr-only">DNS Record Inspector Tool - Ted's Tool Box</h1>
+
+                        <Container component="main" maxWidth="md" sx={{ py: 4 }}>
+                            <Box
+                                component="header"
+                                sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 6, mt: 2 }}
+                            >
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
                                     <Avatar
                                         src="./logo.png"
+                                        alt="DNS Inspector Logo"
                                         variant="rounded"
-                                        sx={{ width: 96, height: 96, bgcolor: '#334155', border: '1px solid #475569' }}
+                                        sx={{
+                                            width: 96,
+                                            height: 96,
+                                            bgcolor: '#0c1a3a',
+                                            border: '1px solid #0752ef',
+                                            boxShadow: '0 0 15px rgba(7, 82, 239, 0.2)',
+                                        }}
                                     >
                                         <span className="material-icons" style={{ fontSize: '48px' }}>
                                             dns
                                         </span>
                                     </Avatar>
-                                    <Box sx={{ textAlign: 'right' }}>
-                                        <Typography variant="h4" fontWeight="900" sx={{ lineHeight: 1.1, letterSpacing: '-0.5px' }}>
+                                    <Box>
+                                        <Typography
+                                            variant="h4"
+                                            component="h2"
+                                            fontWeight="900"
+                                            sx={{ lineHeight: 1.1, letterSpacing: '-0.5px' }}
+                                        >
                                             Ted's Tool Box
                                         </Typography>
                                         <Typography
                                             variant="subtitle2"
-                                            sx={{ color: '#38bdf8', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase' }}
+                                            sx={{ color: '#0752ef', fontWeight: 'bold', letterSpacing: '1px', textTransform: 'uppercase' }}
                                         >
-                                            github.com/mredbishop
+                                            DNS INSPECTOR
                                         </Typography>
                                     </Box>
-
-                                    <Link href="../index.html" underline="none" color="inherit" sx={hoverStyle}>
-                                        <Avatar
-                                            src="../logo.png"
-                                            variant="rounded"
-                                            sx={{ width: 96, height: 96, bgcolor: '#334155', border: '1px solid #475569' }}
-                                        >
-                                            <span className="material-icons" style={{ fontSize: '48px' }}>
-                                                handyman
-                                            </span>
-                                        </Avatar>
-                                    </Link>
                                 </Box>
+
+                                <Link href="../index.html" aria-label="Home" underline="none" color="inherit" sx={hoverStyle}>
+                                    <Avatar
+                                        src="../logo.png"
+                                        alt="Tool Box Home"
+                                        variant="rounded"
+                                        sx={{ width: 96, height: 96, bgcolor: '#334155', border: '1px solid #475569' }}
+                                    >
+                                        <span className="material-icons" style={{ fontSize: '48px' }}>
+                                            handyman
+                                        </span>
+                                    </Avatar>
+                                </Link>
                             </Box>
 
-                            <Paper sx={{ p: 1, mb: 4, display: 'flex', gap: 1, border: '1px solid #334155', borderRadius: '12px' }}>
+                            <Paper
+                                component="section"
+                                sx={{
+                                    p: 1,
+                                    mb: 4,
+                                    display: 'flex',
+                                    gap: 1,
+                                    border: '1px solid #0752ef',
+                                    borderRadius: '12px',
+                                    bgcolor: '#0c1a3a22',
+                                }}
+                            >
                                 <TextField
                                     fullWidth
+                                    aria-label="Domain for DNS analysis"
                                     placeholder="Enter domain to inspect..."
                                     value={domain}
                                     onChange={e => setDomain(e.target.value)}
@@ -222,14 +320,17 @@
                                     variant="contained"
                                     onClick={() => handleLookupAction(domain)}
                                     disabled={loading}
-                                    sx={{ px: 4, borderRadius: '8px' }}
+                                    sx={{ px: 4, borderRadius: '8px', fontWeight: 'bold' }}
                                 >
                                     {loading ? <CircularProgress size={24} color="inherit" /> : 'Inspect'}
                                 </Button>
                             </Paper>
 
                             {currentLookup && !loading && (
-                                <Accordion sx={{ mb: 4, bgcolor: '#1e293b', border: '1px solid #334155', borderRadius: '12px !important' }}>
+                                <Accordion
+                                    component="article"
+                                    sx={{ mb: 4, bgcolor: '#1e293b', border: '1px solid #0752ef', borderRadius: '12px !important' }}
+                                >
                                     <AccordionSummary expandIcon={<span className="material-icons">expand_more</span>}>
                                         <Typography variant="button" color="primary" sx={{ fontWeight: 'bold' }}>
                                             Visual Path Diagram
@@ -241,8 +342,8 @@
                                 </Accordion>
                             )}
 
-                            <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
-                                <Card sx={{ gridColumn: { md: 'span 2' }, borderLeft: '6px solid #38bdf8', borderRadius: '12px' }}>
+                            <Box component="section" sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 3 }}>
+                                <Card sx={{ gridColumn: { md: 'span 2' }, borderLeft: '6px solid #0752ef', borderRadius: '12px' }}>
                                     <CardContent>
                                         <Typography variant="overline" color="primary" sx={{ fontWeight: 'bold' }}>
                                             Registry Data (RDAP)
@@ -258,14 +359,7 @@
                                                 <Box>
                                                     <Stack direction="row" useFlexGap flexWrap="wrap" spacing={1}>
                                                         {results.whois.status?.map(s => (
-                                                            <Chip
-                                                                key={s}
-                                                                label={s}
-                                                                size="small"
-                                                                variant="outlined"
-                                                                color="primary"
-                                                                sx={{ borderRadius: '6px' }}
-                                                            />
+                                                            <Chip key={s} label={s} size="small" variant="outlined" color="primary" />
                                                         ))}
                                                     </Stack>
                                                 </Box>
@@ -279,11 +373,15 @@
                                 </Card>
 
                                 {Object.entries(results.dns).map(([type, records]) => (
-                                    <Card key={type} variant="outlined" sx={{ borderRadius: '12px', overflow: 'hidden' }}>
+                                    <Card
+                                        key={type}
+                                        variant="outlined"
+                                        sx={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid #0c1a3a' }}
+                                    >
                                         <Box
                                             sx={{
                                                 p: 1.5,
-                                                bgcolor: '#334155',
+                                                bgcolor: '#0c1a3a',
                                                 display: 'flex',
                                                 justifyContent: 'space-between',
                                                 alignItems: 'center',
@@ -343,6 +441,9 @@
                                     </Collapse>
                                 </Box>
                             )}
+                            <Box component="footer" sx={{ mt: 10, textAlign: 'center', opacity: 0.5 }}>
+                                <Typography variant="caption">Hosted on GitHub Pages &bull; mredbishop</Typography>
+                            </Box>
                         </Container>
                     </ThemeProvider>
                 );
