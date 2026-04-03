@@ -87,7 +87,7 @@
                     <i class="fa-solid fa-id-card mr-2"></i> Ultimate Fake Badge Maker
                 </h1>
                 <p class="text-slate-500 font-medium max-w-2xl mx-auto">
-                    Create a cool identity card! 100% private: all images stay on your device. Never uploaded!
+                    Create a cool identity card! Any photo you upload is used only on your device to make the badge and is never uploaded to this website.
                 </p>
             </header>
 
@@ -1230,6 +1230,12 @@
                             // html2canvas sees a static layout that exactly matches the preview.
 
                             const clonedBackBody = clonedDoc.getElementById('badge-back-body');
+                            const clonedBack = clonedDoc.getElementById('badge-back');
+                            if (clonedBack) {
+                                clonedBack.style.position = 'relative';
+                                clonedBack.style.height = badge.back.offsetHeight + 10 + 'px';
+                                clonedBack.style.display = 'block';
+                            }
                             if (clonedBackBody) {
                                 clonedBackBody.style.position = 'relative';
                                 clonedBackBody.style.height   = badge.backBody.offsetHeight + 'px';
